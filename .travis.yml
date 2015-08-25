@@ -5,9 +5,6 @@ env:
     - GIMME_OS=darwin GIMME_ARCH=amd64
     - GIMME_OS=windows GIMME_ARCH=amd64
 
-install:
-    - go get -d -v ./...
-
 script:
     - export GOPATH=`pwd`
     - mkdir -p bin
