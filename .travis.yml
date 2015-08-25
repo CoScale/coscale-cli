@@ -7,7 +7,7 @@ install:
     - export GOPATH=`pwd`
     - mkdir -p bin
 script:
-    - go build -o bin/coscale-cli-{$GIMME_OS} coscale
+    - go build -o bin/coscale-cli-$GIMME_OS coscale
 deploy:
     provider: releases
     api_key:
