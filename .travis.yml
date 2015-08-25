@@ -1,0 +1,8 @@
+language: go
+sudo: false
+go:
+  - 1.5
+before_install:
+  - source crosscompile.bash
+install:
+  - go-crosscompile-build-all
