@@ -5,7 +5,9 @@ env:
     - GIMME_OS=darwin GIMME_ARCH=amd64
     - GIMME_OS=windows GIMME_ARCH=amd64
 
-script:
+install:
     - export GOPATH=`pwd`
     - mkdir -p bin
+
+script:
     - go build -o bin/coscale-cli-{$GIMME_OS} coscale
