@@ -9,5 +9,6 @@ install:
     - go get -d -v ./...
 
 script:
+    - export GOPATH=`pwd`
     - mkdir -p bin
     - go build -o bin/coscale-cli-{$GIMME_OS} coscale
