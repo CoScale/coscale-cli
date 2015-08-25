@@ -2,7 +2,7 @@ language: go
 sudo: false
 go:
   - 1.5
-before_install:
-  - source crosscompile.bash
+env:
+  - GOARCH=amd64    
 install:
-  - go-crosscompile-build-all
+  - sh build.sh
