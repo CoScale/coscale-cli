@@ -6,12 +6,12 @@ set -e
 echo "Preparing to install CoScale CLI"
 
 # Check command arguments
-if [ -z "$COSCALE_APPID" ]; then
+if [ -z ${COSCALE_APPID+x} ]; then
     echo "App id:"
     read -e COSCALE_APPID
 fi
 
-if [ -z "$COSCALE_TOKEN" ]; then
+if [ -z ${COSCALE_TOKEN+x} ]; then
     echo "Access token:"
     read -e COSCALE_TOKEN
 fi
