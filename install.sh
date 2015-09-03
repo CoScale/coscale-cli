@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+set -u
+set -e
+
 
 echo "Preparing to install CoScale CLI"
 
