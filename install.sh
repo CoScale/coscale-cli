@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+# COSCALE_APPID=00248f3b-294f-4adc-94eb-33c72b1d0a95 COSCALE_TOKEN=b7672983-078d-4f3d-b8c5-731f76b0786c bash -c "$(curl -L https://raw.githubusercontent.com/CoScale/coscale-cli/feature/install-script/install.sh)"
+
 set -u
 set -e
 
@@ -18,7 +21,7 @@ fi
 
 # Fetch latest release list from Github
 echo "Getting latest release information"
-github_data=`curl -s -L https://api.github.com/repos/CoScale/coscale-cli/releases/latest | python -c 'import json,sys;obj=json.load(sys.stdin); releases = [release["browser_download_url"] for release in obj["assets"]]; print "\n".join(releases)'`
+github_data=`curl -s -L https://api.github.com/repos/CoScale/coscale-cli/releases/latest | grep "browser_download_url" | awk '{ print $2; }' | sed 's/"//g'`
 
 # Detect operation system
 echo "Detecting operation system"
@@ -51,5 +54,5 @@ echo "Testing configuration"
 coscale-cli event list
 
 # Done
-echo "Done, you can now start using the CoScale CLI tool"
+echo "Done, you can now start using the CoScale CLI tool."
 popd
