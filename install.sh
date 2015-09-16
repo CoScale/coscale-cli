@@ -67,7 +67,7 @@ echo
 
 # Create symlink from /usr/bin/coscale-cli to /opt/coscale/cli/coscale-cli
 echo "### Creating symlink"
-ln -v -s /usr/bin/coscale-cli /opt/coscale/cli/coscale-cli
+ln -v -s /opt/coscale/cli/coscale-cli /usr/bin/coscale-cli
 echo
 
 # Create config
