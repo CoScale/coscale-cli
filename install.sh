@@ -77,7 +77,7 @@ echo
 
 # Test config
 echo "Testing configuration"
-coscale-cli event list
+./coscale-cli check-config | sed -e 's/[{}]//g' | awk --field-separator=":" '{print $2 }'
 echo
 
 # Done
