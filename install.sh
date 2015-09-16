@@ -34,7 +34,7 @@ fi
 echo "### Detecting operating system"
 echo
 os=`uname -o | awk '{split($0,a,"/"); print tolower(a[2])}'`
-echo "Operation system: {{$os}}"
+echo "Operation system: $os"
 echo
 
 # Fetch latest release list from Github
@@ -45,7 +45,7 @@ github_data=`curl -s -L https://api.github.com/repos/CoScale/coscale-cli/release
 
 # Select correct release
 release=`echo "$github_data" | grep $os`
-echo "### Latest release: ${{release}}"
+echo "### Latest release: $release"
 
 # Start install
 echo
