@@ -167,6 +167,13 @@ Optional:
 			if err != nil {
 				cmd.PrintResult("", err)
 			}
+			// be sure that the time values are negative
+			if timestamp > 0 {
+				timestamp = -timestamp
+			}
+			if stopTime > 0 {
+				stopTime = -stopTime
+			}
 			cmd.PrintResult(cmd.Capi.InsertEventData(eventObj.ID, message, subject, attribute, timestamp, stopTime))
 		},
 	},

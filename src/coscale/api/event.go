@@ -1,9 +1,6 @@
 package api
 
-import (
-	"fmt"
-	"time"
-)
+import "fmt"
 
 type Event struct {
 	ID                    int64
@@ -62,11 +59,10 @@ func (api *Api) DeleteEvent(event *Event) error {
 }
 
 func (api *Api) InsertEventData(id int64, message, subject, attribute string, timestamp, stopTime int64) (string, error) {
-	now := int64(time.Now().Unix())
 	data := map[string][]string{
 		"message":   {message},
-		"timestamp": {fmt.Sprintf("%d", timestamp - now)},
-		"stopTime":  {fmt.Sprintf("%d", stopTime - now)},
+		"timestamp": {fmt.Sprintf("%d", timestamp)},
+		"stopTime":  {fmt.Sprintf("%d", stopTime)},
 		"subject":   {subject},
 		"attribute": {attribute},
 	}

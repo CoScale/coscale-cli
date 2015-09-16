@@ -198,7 +198,7 @@ type LoginData struct {
 }
 
 // Login to the Api, returns the token and an error.
-func (api *Api) login() error {
+func (api *Api) Login() error {
 
 	data := map[string][]string{
 		"accessToken": {api.accessToken},
@@ -222,7 +222,7 @@ func (api *Api) login() error {
 func (api *Api) makeRawCall(method string, uri string, data map[string][]string, timeout time.Duration) ([]byte, error) {
 	// Not authenticated yet, try login.
 	if api.token == "" {
-		if err := api.login(); err != nil {
+		if err := api.Login(); err != nil {
 			return nil, err
 		}
 	}
@@ -233,7 +233,7 @@ func (api *Api) makeRawCall(method string, uri string, data map[string][]string,
 		if _, ok := err.(UnauthorizedError); ok {
 			// unauthorizedError: the token might have experied. Performing login again
 			// and retrying the request.
-			if err := api.login(); err != nil {
+			if err := api.Login(); err != nil {
 				api.token = ""
 				return nil, err
 			}

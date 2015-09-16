@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-//main command of Coscale cli-cmd
+//main command of Coscale coscale-cli
 func main() {
 
 	var subCommands = []*command.Command{
@@ -17,6 +17,7 @@ func main() {
 		command.MetricGroupObject,
 		command.DataObject,
 		command.AlertObject,
+		command.CheckObject,
 	}
 	var usage = os.Args[0] + ` <object> <action> [--<field>='<data>']`
 	var app = command.NewCommand(os.Args[0], usage, subCommands)

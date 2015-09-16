@@ -1,14 +1,19 @@
 package command
 
 import (
+	"bytes"
 	"coscale/api"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"text/template"
+	"time"
 	"unicode"
 	"unicode/utf8"
 )
@@ -102,14 +107,14 @@ func (c *Command) PrintUsage() {
 	os.Exit(2)
 }
 
-//return a Api object
+// GetApi returns a Api object
 func (c *Command) GetApi(baseUrl, accessToken, appId string, rawOutput bool) *api.Api {
 	if accessToken == "" || appId == "" {
-		dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+		configPath, err := GetConfigPath()
 		if err != nil {
 			os.Exit(EXIT_FLAG_ERROR)
 		}
-		config, err := api.ReadApiConfiguration(dir + "/api.conf")
+		config, err := api.ReadApiConfiguration(configPath)
 		if err != nil {
 			c.PrintUsage()
 		}
@@ -142,26 +147,27 @@ func (c *Command) ParseArgs(args []string) {
 
 func (c *Command) PrintResult(result string, err error) {
 	if err == nil {
-		fmt.Fprint(os.Stdout, result)
+		fmt.Fprintln(os.Stdout, result)
 		os.Exit(EXIT_SUCCESS)
 	} else if api.IsAuthenticationError(err) {
-		fmt.Fprint(os.Stderr, `{"msg":"Authentication failed!"}`)
+		fmt.Fprintln(os.Stderr, `{"msg":"Authentication failed!"}`)
 		os.Exit(EXIT_AUTHENTICATION_ERROR)
 	} else {
-		fmt.Fprintf(os.Stderr, GetErrorJson(err))
+		fmt.Fprintln(os.Stderr, GetErrorJson(err))
 		os.Exit(EXIT_SUCCESS_ERROR)
 	}
 }
 
 // GetErrorJson return only the json string from a error message from api
 func GetErrorJson(err error) string {
-	if strings.Index(err.Error(), `{`) > -1 {
+	index := strings.Index(err.Error(), `{`)
+	if index > -1 {
 		return err.Error()[strings.Index(err.Error(), `{`):]
 	}
-	return err.Error()
+	return fmt.Sprintf(`{"msg":"%s"}`, err.Error())
 }
 
-var usageTemplate = `cli-cmd a tool for CoScale Api.
+var usageTemplate = `coscale-cli a tool for CoScale Api.
 
 Usage:
 	{{.UsageLine}}
@@ -178,10 +184,9 @@ Usage:
 The json objects are returned formatted by default, but can be returned on 1 line by using:
 	--rawOutput
 	
-The CoScale api configuration (authentication) by default will be taken from api.conf file,
-placed in the same folder with the cli-cmd. api.conf file it is the same configuration file
-used by the CoScale agent. If the api.conf file doesn't exists, the informations also can be
-provided on the command line using:
+By default the CoScale api credentials (authentication) will be taken from api.conf
+located in the same directory as the coscale-cli binary. If the file does not exist,
+the credentials can also be provided on the command line using:
 	--api-url
 		Base url for the api (optional, default = "https://api.coscale.com/").
 	--app-id
@@ -189,5 +194,58 @@ provided on the command line using:
 	--access-token
 		A valid access token for the given application.
 
-Use "cli-cmd [object] <help>" for more information about a command.
+Use "coscale-cli [object] <help>" for more information about a command.
 `
+
+// GetConfigPath is used to return the absolut path of the api configuration file
+func GetConfigPath() (string, error) {
+	configFile := "/api.conf"
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		os.Exit(EXIT_FLAG_ERROR)
+	}
+	configPath := dir + configFile
+	if _, err := os.Stat(configPath); err == nil {
+		return configPath, nil
+	}
+	var cmdName string
+	if runtime.GOOS == "windows" {
+		cmdName = "where"
+	} else {
+		cmdName = "which"
+	}
+	response, err := GetCommandOutput(cmdName, 2*time.Second, os.Args[0])
+	path := bytes.Split(response, []byte("\n"))[0]
+	if err != nil {
+		return "", err
+	}
+	return filepath.Dir(string(path)) + configFile, nil
+}
+
+// GetCommandOutput returns stdout of command as a string
+func GetCommandOutput(command string, timeout time.Duration, arg ...string) ([]byte, error) {
+	var err error
+	var stdOut bytes.Buffer
+	var stdErr bytes.Buffer
+	var c = make(chan []byte)
+	cmd := exec.Command(command, arg...)
+	cmd.Stdout = &stdOut
+	cmd.Stderr = &stdErr
+	if err = cmd.Start(); err != nil {
+		return nil, fmt.Errorf("%s %s", err.Error(), stdErr.String())
+	}
+	go func() {
+		err = cmd.Wait()
+		c <- stdOut.Bytes()
+	}()
+	time.AfterFunc(timeout, func() {
+		cmd.Process.Kill()
+		err = errors.New("Maxruntime exceeded")
+		c <- nil
+	})
+	response := <-c
+	if err != nil {
+		fmt.Errorf("%s %s", err.Error(), stdErr.String())
+	}
+	return response, nil
+}
