@@ -31,7 +31,8 @@ if [ ! -f "/opt/coscale/cli/api.conf" ]; then
         echo
     fi
 else
-    echo "### Configuration detected in /opt/coscale/cli/api.conf"
+    echo "Configuration detected in /opt/coscale/cli/api.conf"
+    echo
 fi
 
 # Detect operation system
