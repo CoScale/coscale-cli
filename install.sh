@@ -67,7 +67,19 @@ echo
 
 # Create symlink from /usr/bin/coscale-cli to /opt/coscale/cli/coscale-cli
 echo "### Creating symlink"
-ln -v -s /opt/coscale/cli/coscale-cli /usr/bin/coscale-cli
+# Check if file exists
+if [ -f "/usr/bin/coscale-cli" ]; then
+    # Check if symlink is correct
+    if [ "$(readlink /usr/bin/coscale-cli)" = "/opt/coscale/cli/coscale-cli" ]; then
+        echo "Correct symlink detected"
+    else
+        echo "Incorrect symlink detected, please the file /usr/bin/coscale-cli and start again"
+        exit 1
+    fi
+else
+    # Symlink does not exist, create
+    ln -v -s /opt/coscale/cli/coscale-cli /usr/bin/coscale-cli
+fi
 echo
 
 # Create config
