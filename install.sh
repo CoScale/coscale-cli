@@ -13,21 +13,25 @@ echo
 echo "## Checking configuration and environment"
 echo
 
-if [ -z ${COSCALE_APPID+x} ] || [ -z ${COSCALE_TOKEN+x} ]; then
-    echo "### Configuration"
-    echo
-    # Check command arguments
-    if [ -z ${COSCALE_APPID+x} ]; then
-        echo "Please enter your app id:"
-        read -e -r COSCALE_APPID
-    fi
-    echo
+if [ ! -f "/opt/coscale/cli/api.conf" ]; then
+    if [ -z ${COSCALE_APPID+x} ] || [ -z ${COSCALE_TOKEN+x} ]; then
+        echo "### Configuration"
+        echo
+        # Check command arguments
+        if [ -z ${COSCALE_APPID+x} ]; then
+            echo "Please enter your app id:"
+            read -e -r COSCALE_APPID
+        fi
+        echo
 
-    if [ -z ${COSCALE_TOKEN+x} ]; then
-        echo "Please enter your access token:"
-        read -e -r COSCALE_TOKEN
+        if [ -z ${COSCALE_TOKEN+x} ]; then
+            echo "Please enter your access token:"
+            read -e -r COSCALE_TOKEN
+        fi
+        echo
     fi
-    echo
+else
+    echo "### Configuration detected in /opt/coscale/cli/api.conf"
 fi
 
 # Detect operation system
@@ -83,9 +87,11 @@ fi
 echo
 
 # Create config
-echo "Generating config"
-echo "{\"baseurl\":\"https://api.coscale.com\", \"appid\":\"$COSCALE_APPID\", \"accesstoken\":\"$COSCALE_TOKEN\"}" | gzip -c > /opt/coscale/cli/api.conf
-echo
+if [ ! -f "/opt/coscale/cli/api.conf" ]; then
+    echo "Generating config"
+    echo "{\"baseurl\":\"https://api.coscale.com\", \"appid\":\"$COSCALE_APPID\", \"accesstoken\":\"$COSCALE_TOKEN\"}" | gzip -c > /opt/coscale/cli/api.conf
+    echo
+fi
 
 # Test config
 echo "Testing configuration"
