@@ -130,9 +130,9 @@ Optional:
 	--attribute
 		JSON String detailing the progress of the event.
 	--timestamp
-		Timestamp in seconds ago. [default: 0]
+		Timestamp in seconds ago(negative values) or unix timestamp(positive values). [default: 0]
 	--stopTime
-		The time at which the EventData stopped in seconds ago. [default: 0]
+		The time at which the EventData stopped in seconds ago(negative values) or unix timestamp(positive values). [default: 0]
 		`,
 		Run: func(cmd *Command, args []string) {
 			var id, timestamp, stopTime int64
@@ -166,13 +166,6 @@ Optional:
 			}
 			if err != nil {
 				cmd.PrintResult("", err)
-			}
-			// be sure that the time values are negative
-			if timestamp > 0 {
-				timestamp = -timestamp
-			}
-			if stopTime > 0 {
-				stopTime = -stopTime
 			}
 			cmd.PrintResult(cmd.Capi.InsertEventData(eventObj.ID, message, subject, attribute, timestamp, stopTime))
 		},

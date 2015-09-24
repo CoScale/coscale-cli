@@ -22,9 +22,9 @@ Mandatory:
 		The subject string eg. s1 for server 1, g2 for servergroup 2, a for application.
 Optional:		
 	--start
-		The start timestamp in seconds ago. [default: 0]
+		The start timestamp in seconds ago(negative values) or unix timestamp (positive values). [default: 0]
 	--stop
-		The stop timestamp in seconds ago. [default: 0]
+		The stop timestamp in seconds ago(negative values) or unix timestamp (positive values). [default: 0]
 	--aggregator
 		The data aggregator (AVG, MIN, MAX). [default: AVG]
 	--aggregateSubjects
