@@ -96,7 +96,7 @@ fi
 
 # Test config
 echo "Testing configuration"
-./coscale-cli check-config | sed -e 's/[{}]//g' | awk --field-separator=":" '{print $2 }'
+./coscale-cli check-config | sed -e 's/[{}]//g' | awk -F ":" '{print $2 }'
 echo
 
 # Done
