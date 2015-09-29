@@ -199,6 +199,7 @@ Use "coscale-cli [object] <help>" for more information about a command.
 
 // GetConfigPath is used to return the absolut path of the api configuration file
 func GetConfigPath() (string, error) {
+	var carriageReturn string
 	configFile := "/api.conf"
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
@@ -211,15 +212,29 @@ func GetConfigPath() (string, error) {
 	var cmdName string
 	if runtime.GOOS == "windows" {
 		cmdName = "where"
+		carriageReturn = "\r\n"
 	} else {
 		cmdName = "which"
+		carriageReturn = "\n"
 	}
 	response, err := GetCommandOutput(cmdName, 2*time.Second, os.Args[0])
-	path := bytes.Split(response, []byte("\n"))[0]
+	path := string(bytes.Split(response, []byte(carriageReturn))[0])
 	if err != nil {
 		return "", err
 	}
-	return filepath.Dir(string(path)) + configFile, nil
+	// check if is a symlink
+	file, err := os.Lstat(path)
+	if err != nil {
+		return "", err
+	}
+	if file.Mode()&os.ModeSymlink == os.ModeSymlink {
+		// This is a symlink
+		path, err = filepath.EvalSymlinks(path)
+		if err != nil {
+			return "", err
+		}
+	}
+	return filepath.Dir(path) + configFile, nil
 }
 
 // GetCommandOutput returns stdout of command as a string
