@@ -198,43 +198,59 @@ Use "coscale-cli [object] <help>" for more information about a command.
 `
 
 // GetConfigPath is used to return the absolut path of the api configuration file
-func GetConfigPath() (string, error) {
-	var carriageReturn string
-	configFile := "/api.conf"
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		os.Exit(EXIT_FLAG_ERROR)
-	}
-	configPath := dir + configFile
-	if _, err := os.Stat(configPath); err == nil {
-		return configPath, nil
-	}
-	var cmdName string
+func GetConfigPath() (c string, e error) {
+	command := os.Args[0]
+	var configFile, backwardsConfigFile, dir, cmdName, carriageReturn string
+	var err error
 	if runtime.GOOS == "windows" {
+		configFile = "api.conf"
+		backwardsConfigFile = "api.conf"
 		cmdName = "where"
 		carriageReturn = "\r\n"
 	} else {
+		configFile = filepath.Join("etc", "api.conf")
+		backwardsConfigFile = "api.conf" // once we had api.conf in the same folder as cli executable
 		cmdName = "which"
 		carriageReturn = "\n"
 	}
-	response, err := GetCommandOutput(cmdName, 2*time.Second, os.Args[0])
-	path := string(bytes.Split(response, []byte(carriageReturn))[0])
-	if err != nil {
-		return "", err
+	// we calculate folder where the command is
+
+	// 1. check if command is in PATH
+	// if we check a command that doesn't exist on linux we get error
+	response, err := GetCommandOutput(cmdName, 2*time.Second, command)
+	if err == nil {
+		command = string(bytes.Split(response, []byte(carriageReturn))[0])
 	}
-	// check if is a symlink
-	file, err := os.Lstat(path)
+	err = nil
+	// 2. check if it is a symlink
+	file, err := os.Lstat(command)
 	if err != nil {
 		return "", err
 	}
 	if file.Mode()&os.ModeSymlink == os.ModeSymlink {
 		// This is a symlink
-		path, err = filepath.EvalSymlinks(path)
+		command, err = filepath.EvalSymlinks(command)
 		if err != nil {
 			return "", err
 		}
 	}
-	return filepath.Dir(path) + configFile, nil
+	// check if config file is in dir
+	dir, err = filepath.Abs(filepath.Dir(command))
+	if err != nil {
+		os.Exit(EXIT_FLAG_ERROR)
+	}
+	configPath := filepath.Join(dir, configFile)
+	_, err = os.Stat(configPath)
+	if err == nil {
+		return configPath, nil
+	}
+	// try the backwards compatible approach
+	configPath = filepath.Join(dir, backwardsConfigFile)
+	_, err = os.Stat(configPath)
+	if err == nil {
+		return configPath, nil
+	}
+	return "", err
 }
 
 // GetCommandOutput returns stdout of command as a string
