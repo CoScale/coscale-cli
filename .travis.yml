@@ -1,18 +1,17 @@
 language: go
 env:
     - GIMME_OS=linux GIMME_ARCH=amd64 EXTENSION=
-    - GIMME_OS=darwin GIMME_ARCH=amd64 EXTENSION=
     - GIMME_OS=windows GIMME_ARCH=amd64 EXTENSION=.exe
 install:
     - export GOPATH=`pwd`
     - mkdir -p bin
 script:
-    - go build -o bin/coscale-cli-$GIMME_OS$EXTENSION coscale
+    - go build -o bin/coscale-cli$EXTENSION coscale
 deploy:
     provider: releases
     api_key:
         secure: heF7EiZ6fwr456zR4fwFvbsAqWjAvsIz5RD6P8UnpB2UhZ05f9eC4Qc3crfedZiQKgInkF9EClf8+k5chIhz8/xvO772PN7uPFBJNR39/mbxCrJXXM5Hr2Jgbuhnt4+kw/OhBmpTyPn8SZ5XtHDAd1PM419sHZjAxm7OJ85xu8XswjCMSjZ/U3si0Syo6EY3BlMbjjN4X0iNBqtuX8lEqWQ0jXz0j3r5KMhtbKXKXKqNVJv+lgMqJ/79+NSfvuUcYppgozYcSHhrCzjhLXz7JCCCFyJMW0QQUeHZZCsowifSEeR7vwkihhuy6OPd5pEHWoFuXA8KWQliHQx5864v+6U8XkM8szyCicL0xQ/pekr8iy7TU92kthM/Qli72Miw8g9LBJKgV2C7TP1wMHJ9X57uMW385P7BJjVxyEFbFNwyyPUc/9nkqr1nGfeqwD3xPqP9qhw5/Lf5mTzndZ0/ykhUy6EddhPeS0gfeebPkWETmWPqslFbDZBjMAN/BAzbSQxJBwdoZipkk/hY58HIhkytPeqD/TNPQXUni/3BYM6gYjAGAo2LnX+b3pJFmAJcswCaFP9NUavlyogq/7tK6lgKX3f1ILyN7jsD95FbZPHwWg+msNF7RpHx0z2Xs3DAQ46F1LWT28RSm0X+Ihp2rAKhdKixGAS3B+7xYRMsrGQ=
-    file: bin/coscale-cliEXTENSION
+    file: bin/coscale-cli$EXTENSION
     skip_cleanup: true
     on:
         tags: true
