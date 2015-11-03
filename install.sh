@@ -49,7 +49,7 @@ echo
 github_data=$(curl -s -L https://api.github.com/repos/CoScale/coscale-cli/releases/latest | grep "browser_download_url" | awk '{ print $2; }' | sed 's/"//g')
 
 # Select correct release
-release=`echo "$github_data" | grep "$os"`
+release=`echo "$github_data" | grep -v ".exe"`
 echo "### Latest release: $release"
 
 # Start install
