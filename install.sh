@@ -86,6 +86,7 @@ echo "----------------------------------------------"
 echo -e "Starting installation"
 echo "----------------------------------------------"
 
+
 # Fetch latest release list from Github
 echo
 echo -e "- Getting latest release information"
@@ -119,11 +120,10 @@ if [ "$SYMLINK" = true ] ; then
 fi
 
 # Create config
-if [ ! -f "$PATH_INSTALL/api.conf" ]; then
-    echo -e "- Generating config file"
-    echo "{\"baseurl\":\"https://api.coscale.com\", \"appid\":\"$COSCALE_APPID\", \"accesstoken\":\"$COSCALE_TOKEN\"}" | gzip -c > $PATH_INSTALL/api.conf
-    echo
-fi
+echo -e "- Generating config file"
+echo "{\"baseurl\":\"https://api.coscale.com\", \"appid\":\"$COSCALE_APPID\", \"accesstoken\":\"$COSCALE_TOKEN\"}" | gzip -c > $PATH_INSTALL/api.conf
+echo
+
 
 # Test config
 echo -e "- Testing configuration"
