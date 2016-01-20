@@ -49,7 +49,16 @@ read -i "$COSCALE_APPID" -p "Please enter your application id: " -e -r COSCALE_A
 read -i "$COSCALE_TOKEN" -p "Please enter your access token: " -e -r COSCALE_TOKEN
 
 read -i "$PATH_INSTALL" -p "Installation path: " -e -r PATH_INSTALL
-PATH_INSTALL=$(readlink -f $PATH_INSTALL)
+
+# Create dirs
+if [ ! -d "$PATH_INSTALL" ]; then
+    echo "$PATH_INSTALL does not exist, do you want to create it?"
+    if ask_yesno "Create directory $PATH_SYMLINK?"; then
+        mkdir -v -p "$PATH_INSTALL"
+    else
+        exit 1
+    fi
+fi
 
 if ask_yesno "Create a symlink [$PATH_SYMLINK]?"; then
     SYMLINK="true"
@@ -58,6 +67,7 @@ echo
 
 echo "----------------------------------------------"
 echo -e "\t Summary"
+echo "----------------------------------------------"
 echo
 echo -e "Application ID \t\t: $COSCALE_APPID"
 echo -e "Access token \t\t: $COSCALE_TOKEN"
@@ -74,19 +84,13 @@ fi
 
 echo "----------------------------------------------"
 echo -e "Starting installation"
+echo "----------------------------------------------"
 
 # Fetch latest release list from Github
 echo
 echo -e "- Getting latest release information"
 github_data=$(curl -s -L https://api.github.com/repos/CoScale/coscale-cli/releases/latest | grep "browser_download_url" | awk '{ print $2; }' | sed 's/"//g')
 release=$(echo "$github_data" | grep -v ".exe")
-
-# Create dirs
-if [ ! -d "$PATH_INSTALL" ]; then
-    echo echo -e "- Creating directories $PATH_INSTALL/"
-    mkdir -v -p "$PATH_INSTALL"
-    echo
-fi
 
 # Install client
 echo -e "- Downloading client to $PATH_INSTALL/coscale-cli"
@@ -101,15 +105,15 @@ if [ "$SYMLINK" = true ] ; then
     if [ -f "/usr/bin/coscale-cli" ]; then
         # Check if symlink is correct
         if [ "$(readlink /usr/bin/coscale-cli)" = "$PATH_INSTALL/coscale-cli" ]; then
-            echo -e "\tExisting symlink detected"
+            echo -e "  Existing symlink detected"
         else
-            echo -e "\tIncorrect symlink detected, please remove the file /usr/bin/coscale-cli and start again"
+            echo -e "  Incorrect symlink detected, please remove the file /usr/bin/coscale-cli and start again"
             exit 1
         fi
     else
         # Symlink does not exist, create
         ln -v -s "$PATH_INSTALL/coscale-cli" /usr/bin/coscale-cli
-        echo -e "\tSymlink created"
+        echo -e "  Symlink created"
     fi
     echo
 fi
