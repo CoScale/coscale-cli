@@ -17,6 +17,22 @@ func (e Event) GetId() int64 {
 	return e.ID
 }
 
+// EventData describes the event data uploaded to api
+type EventData struct {
+	ID int64
+	Timestamp int64
+	Stoptime int64
+	Message string
+	Attribute string
+	Subject string
+	Version int64
+	UpdateTime int64
+}
+
+func (e EventData) GetId() int64 {
+	return e.ID
+}
+
 func (api *Api) CreateEvent(name, description, attributeDescriptions, source, typeString string) (string, error) {
 	data := map[string][]string{
 		"name":                  {name},
@@ -58,6 +74,14 @@ func (api *Api) DeleteEvent(event *Event) error {
 	return nil
 }
 
+//GetEventData will return the eventdata by the event Id and eventdata Id
+func (api *Api) GetEventData(eventId, eventdataId int64, eventData *EventData) error {
+	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/events/%d/data/get/%d/", api.appID, eventId, eventdataId), nil, false, &eventData); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (api *Api) InsertEventData(id int64, message, subject, attribute string, timestamp, stopTime int64) (string, error) {
 	data := map[string][]string{
 		"message":   {message},
@@ -73,10 +97,26 @@ func (api *Api) InsertEventData(id int64, message, subject, attribute string, ti
 	return result, nil
 }
 
-func (api *Api) GetEventData(id int64) (string, error) {
+func (api *Api) UpdateEventData(eventId, eventdataId int64, eventData *EventData) (string, error) {	
+	data := map[string][]string{
+		"message":   {eventData.Message},
+		"timestamp": {fmt.Sprintf("%d", eventData.Timestamp)},
+		"stopTime":  {fmt.Sprintf("%d", eventData.Stoptime)},
+		"subject":   {eventData.Subject},
+		"attribute": {eventData.Attribute},
+		"version": {fmt.Sprintf("%d", eventData.Version)},
+	}
 	var result string
-	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/events/%d/data/?start=1434431175", api.appID, id), nil, true, &result); err != nil {
+	if err := api.makeCall("PUT", fmt.Sprintf("/api/v1/app/%s/events/%d/data/%d/", api.appID, eventId, eventData.ID), data, true, &result); err != nil {
 		return "", err
 	}
 	return result, nil
+}
+
+// DeleteEventData is used to delete a data entry for a event
+func (api *Api) DeleteEventData(eventId, eventdataId int64) error {
+	if err := api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/events/%d/data/%d/", api.appID, eventId, eventdataId), nil, false, nil); err != nil {
+		return err
+	}
+	return nil
 }

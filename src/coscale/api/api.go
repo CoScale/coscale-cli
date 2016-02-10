@@ -19,6 +19,10 @@ type Object interface {
 }
 
 const (
+	DEFAULT_STRING_VALUE string = `!>dUmmy<!`
+)
+
+const (
 	connectionTimeout time.Duration = 30 * time.Second
 	readWriteTimeout  time.Duration = 30 * time.Second
 	downloadTimeout   time.Duration = 300 * time.Second

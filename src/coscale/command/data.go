@@ -52,30 +52,76 @@ Optional:
 	},
 	{
 		Name:      "insert",
-		UsageLine: `data insert (--datapoint)`,
+		UsageLine: `data insert (--data)`,
 		Long: `
-Create new EventData for a given event.
+Insert data for metrics into the datastore.
 
-The flags for data event action are:
+The flags for data insert action are:
 Mandatory:
+	--data
+		To send data for DOUBLE metric data typ use the following format:
+			"M<metric id>:S<subject Id>:<time>:<value/s>"
+			eg:	--data="M1:S100:1454580954:1.2
+
+		To send data for HISTOGRAM metric data type use the following format:
+			"M<metric id>:S<subject Id>:<seconds ago>:[<no of samples>,<percentile width>,[<percentile data>]]"
+			eg: --data="M1:S1:-60:[100,50,[1,2,3,4,5,6]]"
+
+		Sending multiple data entries is possible by using semicolon as separator.
+			eg: --data="M1:S100:-60:1.2;M1:S100:0:2"
+
+		The time is formatted as follows:
+		    Positive numbers are interpreted as unix timestamps in seconds.
+		    Zero is interpreted as the current time.
+		    Negative numbers are interpreted as a seconds ago from the current time.
+
+Deprecated:
 	--datapoint
-		Data format is:"M<metric id>:<subject Id>:<seconds ago>:<value/s>" eg:"M1:S100:120:1,2"
+		To send data for DOUBLE metric data typ use the following format:
+			"M<metric id>:S<subject Id>:<seconds ago>:<value/s>"
+			eg:	--datapoint="M1:S100:120:1.2
+			
+		To send data for HISTOGRAM metric data type use the following format:
+			"M<metric id>:S<subject Id>:<seconds ago>:[<no of samples>,<percentile width>,[<percentile data>]]"
+			eg: --datapoint="M1:S1:60:[100,50,[1,2,3,4,5,6]]"
 `,
 		Run: func(cmd *Command, args []string) {
 			var datapoint string
+			var data string
+
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
+
 			cmd.Flag.StringVar(&datapoint, "datapoint", DEFAULT_FLAG_VALUE, "")
+			cmd.Flag.StringVar(&data, "data", DEFAULT_FLAG_VALUE, "")
 			cmd.ParseArgs(args)
-			if datapoint == DEFAULT_FLAG_VALUE {
+
+			if datapoint == DEFAULT_FLAG_VALUE && data == DEFAULT_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
-			data, err := api.ParseDataPoint(datapoint)
+
+			timeInSecAgo := false
+			if data == DEFAULT_FLAG_VALUE {
+				timeInSecAgo = true
+				data = datapoint
+			}
+
+			// ParseDataPoint coult return data for multiple calls for same metricIDs with different subjectID
+			callsData, err := api.ParseDataPoint(data, timeInSecAgo)
 			if err != nil {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
-			cmd.PrintResult(cmd.Capi.InsertData(data))
+			var result string
+			var resErr error
+			// if datapoint contain multiple subject id, then we will have multiple api calls
+			for _, callData := range callsData {
+				result, resErr = cmd.Capi.InsertData(callData)
+				if resErr != nil {
+					break
+				}
+			}
+			cmd.PrintResult(result, resErr)
 		},
 	},
 }

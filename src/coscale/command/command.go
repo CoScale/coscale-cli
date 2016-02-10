@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	DEFAULT_FLAG_VALUE string = `!>dUmmy<!`
+	DEFAULT_FLAG_VALUE string = api.DEFAULT_STRING_VALUE
 )
 
 const (
@@ -34,6 +34,7 @@ type Command struct {
 	Name        string
 	UsageLine   string
 	Long        string
+	Deprecated	bool
 	SubCommands []*Command
 	Capi        *api.Api //api connector
 	Flag        flag.FlagSet
@@ -176,9 +177,9 @@ Usage:
 
 {{.Long | trim}}{{else}}
 {{.Name | printf "Actions for command \"%s\":"}}
-{{range .SubCommands}}
+{{range .SubCommands}}{{if not .Deprecated}}
 	{{.Name | printf "%s"}}
-			{{.UsageLine | printf "%-11s"}}{{end}}
+			{{.UsageLine | printf "%-11s"}}{{end}}{{end}}
     {{end}}
 
 The json objects are returned formatted by default, but can be returned on 1 line by using:

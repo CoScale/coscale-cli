@@ -104,14 +104,14 @@ Optional:
 		Long: `
 Update a CoScale metric object.
 
-The flags for new event action are:
+The flags for update metric action are:
 
 Mandatory:
 	--name 
-		specify the event name of the event.
-Optional:
+		specify the name of the metric.
 	--id
-		Unique identifier, if we want to update the name of a event, this become mandatory
+		Unique identifier, if we want to update the name of a metric, this become mandatory
+Optional:
 	--description
 			Description for the metric.
 	--dataType
@@ -123,7 +123,7 @@ Optional:
 	--attachTo
 			Describes what the relation of this Metric is. Options are SERVER, SERVERGROUP, APPLICATION, REQUEST, DATABASE, QUERY and ANALYSIS.
 	--source
-			Describes who added the event. Can be chosen by the user. [default: "cli"]
+			Describes who added the metric. Can be chosen by the user. [default: "cli"]
 	--period
 			The amount of time (in seconds) between 2 data points. [default: 60]
 `,
@@ -157,7 +157,7 @@ Optional:
 			if err != nil {
 				cmd.PrintResult("", err)
 			}
-			//update the event object values
+			//update the metric object values
 			if name != DEFAULT_FLAG_VALUE {
 				metricObj.Name = name
 			}
@@ -285,7 +285,7 @@ Optional:
 				cmd.PrintResult("", err)
 			}
 
-			//update the server object values
+			//update the metricgroup object values
 			if name != DEFAULT_FLAG_VALUE {
 				metricGroupObj.Name = name
 			}
