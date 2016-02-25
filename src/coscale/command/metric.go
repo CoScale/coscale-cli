@@ -29,7 +29,7 @@ Mandatory:
 			var name string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
 			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
-			cmd.Flag.StringVar(&name, "name", DEFAULT_FLAG_VALUE, "Name for the metric group.")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the metric group.")
 
 			cmd.ParseArgs(args)
 
@@ -37,7 +37,7 @@ Mandatory:
 			var err error
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("metricgroup", id, metricGroupObj)
-			} else if name != DEFAULT_FLAG_VALUE {
+			} else if name != DEFAULT_STRING_FLAG_VALUE {
 				err = cmd.Capi.GetObejctRefByName("metricgroup", name, metricGroupObj)
 			} else {
 				cmd.PrintUsage()
@@ -81,17 +81,17 @@ Optional:
 			var name, description, dataType, subject, unit, attachTo, source string
 			var period int
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_FLAG_VALUE, "Name for the metric.")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the metric.")
 			cmd.Flag.StringVar(&description, "description", "", "Description for the metric.")
-			cmd.Flag.StringVar(&dataType, "dataType", DEFAULT_FLAG_VALUE, `The following data types are defined: "LONG", "DOUBLE", "HISTOGRAM".`)
-			cmd.Flag.StringVar(&subject, "subject", DEFAULT_FLAG_VALUE, `A metric is defined on either a "SERVER", "GROUP" or "APPLICATION".`)
+			cmd.Flag.StringVar(&dataType, "dataType", DEFAULT_STRING_FLAG_VALUE, `The following data types are defined: "LONG", "DOUBLE", "HISTOGRAM".`)
+			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, `A metric is defined on either a "SERVER", "GROUP" or "APPLICATION".`)
 			cmd.Flag.StringVar(&unit, "unit", "", "The unit for the metric.")
 			cmd.Flag.StringVar(&attachTo, "attachTo", "", "Describes what the relation of this Metric is.")
 			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the metric.")
 			cmd.Flag.IntVar(&period, "period", 60, "The amount of time (in seconds) between 2 data points.")
 			cmd.ParseArgs(args)
 
-			if name == DEFAULT_FLAG_VALUE || dataType == DEFAULT_FLAG_VALUE || subject == DEFAULT_FLAG_VALUE {
+			if name == DEFAULT_STRING_FLAG_VALUE || dataType == DEFAULT_STRING_FLAG_VALUE || subject == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
@@ -133,19 +133,19 @@ Optional:
 			var id int64
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
 			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
-			cmd.Flag.StringVar(&name, "name", DEFAULT_FLAG_VALUE, "Name for the metric.")
-			cmd.Flag.StringVar(&description, "description", DEFAULT_FLAG_VALUE, "Description for the metric.")
-			cmd.Flag.StringVar(&dataType, "dataType", DEFAULT_FLAG_VALUE, `The following data types are defined: "LONG", "DOUBLE", "HISTOGRAM".`)
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the metric.")
+			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "Description for the metric.")
+			cmd.Flag.StringVar(&dataType, "dataType", DEFAULT_STRING_FLAG_VALUE, `The following data types are defined: "LONG", "DOUBLE", "HISTOGRAM".`)
 			cmd.Flag.StringVar(&subject, "subject", "", `A metric is defined on either a "SERVER", "GROUP" or "APPLICATION".`)
-			cmd.Flag.StringVar(&unit, "unit", DEFAULT_FLAG_VALUE, "The unit for the metric.")
+			cmd.Flag.StringVar(&unit, "unit", DEFAULT_STRING_FLAG_VALUE, "The unit for the metric.")
 			cmd.Flag.StringVar(&attachTo, "attachTo", "", "Describes what the relation of this Metric is.")
-			cmd.Flag.StringVar(&source, "source", DEFAULT_FLAG_VALUE, "Describes who added the metric.")
+			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the metric.")
 			cmd.Flag.IntVar(&period, "period", -1, "The amount of time (in seconds) between 2 data points.")
 			cmd.ParseArgs(args)
 
 			var metricObj = &api.Metric{}
 			var err error
-			if name == DEFAULT_FLAG_VALUE {
+			if name == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
@@ -158,22 +158,22 @@ Optional:
 				cmd.PrintResult("", err)
 			}
 			//update the metric object values
-			if name != DEFAULT_FLAG_VALUE {
+			if name != DEFAULT_STRING_FLAG_VALUE {
 				metricObj.Name = name
 			}
-			if dataType != DEFAULT_FLAG_VALUE {
+			if dataType != DEFAULT_STRING_FLAG_VALUE {
 				metricObj.DataType = dataType
 			}
-			if description != DEFAULT_FLAG_VALUE {
+			if description != DEFAULT_STRING_FLAG_VALUE {
 				metricObj.Description = description
 			}
 			if period != -1 {
 				metricObj.Period = period
 			}
-			if source != DEFAULT_FLAG_VALUE {
+			if source != DEFAULT_STRING_FLAG_VALUE {
 				metricObj.Source = source
 			}
-			if unit != DEFAULT_FLAG_VALUE {
+			if unit != DEFAULT_STRING_FLAG_VALUE {
 				metricObj.Unit = unit
 			}
 
@@ -215,15 +215,15 @@ Optional:
 		Run: func(cmd *Command, args []string) {
 			var name, description, Type, state, source, subject string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_FLAG_VALUE, "Name for the metric group.")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the metric group.")
 			cmd.Flag.StringVar(&description, "description", "", "Description for the metric group.")
 			cmd.Flag.StringVar(&Type, "type", "", "Describes the type of metric group.")
-			cmd.Flag.StringVar(&subject, "subject", DEFAULT_FLAG_VALUE, `The subject type of the metric group. "APPLICATION", "SERVERGROUP" or "SERVER".`)
+			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, `The subject type of the metric group. "APPLICATION", "SERVERGROUP" or "SERVER".`)
 			cmd.Flag.StringVar(&state, "state", "ENABLED", `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
 			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the metric group.")
 			cmd.ParseArgs(args)
 
-			if name == DEFAULT_FLAG_VALUE || subject == DEFAULT_FLAG_VALUE {
+			if name == DEFAULT_STRING_FLAG_VALUE || subject == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
@@ -258,14 +258,14 @@ Optional:
 			var name, description, Type, state, source string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
 			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
-			cmd.Flag.StringVar(&name, "name", DEFAULT_FLAG_VALUE, "Name for the metric group.")
-			cmd.Flag.StringVar(&description, "description", DEFAULT_FLAG_VALUE, "Description for the metric group.")
-			cmd.Flag.StringVar(&Type, "type", DEFAULT_FLAG_VALUE, "Describes the type of metric group.")
-			cmd.Flag.StringVar(&state, "state", DEFAULT_FLAG_VALUE, `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
-			cmd.Flag.StringVar(&source, "source", DEFAULT_FLAG_VALUE, "Describes who added the metric group.")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the metric group.")
+			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "Description for the metric group.")
+			cmd.Flag.StringVar(&Type, "type", DEFAULT_STRING_FLAG_VALUE, "Describes the type of metric group.")
+			cmd.Flag.StringVar(&state, "state", DEFAULT_STRING_FLAG_VALUE, `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
+			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the metric group.")
 			cmd.ParseArgs(args)
 
-			if name == DEFAULT_FLAG_VALUE {
+			if name == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
@@ -286,19 +286,19 @@ Optional:
 			}
 
 			//update the metricgroup object values
-			if name != DEFAULT_FLAG_VALUE {
+			if name != DEFAULT_STRING_FLAG_VALUE {
 				metricGroupObj.Name = name
 			}
-			if description != DEFAULT_FLAG_VALUE {
+			if description != DEFAULT_STRING_FLAG_VALUE {
 				metricGroupObj.Description = description
 			}
-			if Type != DEFAULT_FLAG_VALUE {
+			if Type != DEFAULT_STRING_FLAG_VALUE {
 				metricGroupObj.Type = Type
 			}
-			if source != DEFAULT_FLAG_VALUE {
+			if source != DEFAULT_STRING_FLAG_VALUE {
 				metricGroupObj.Source = source
 			}
-			if state != DEFAULT_FLAG_VALUE {
+			if state != DEFAULT_STRING_FLAG_VALUE {
 				metricGroupObj.State = state
 			}
 			cmd.PrintResult(cmd.Capi.UpdateMetricGroup(metricGroupObj))

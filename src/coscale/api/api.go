@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"fmt"
+	"math"
 	//"sync"
 	"encoding/json"
 	"errors"
@@ -20,6 +21,7 @@ type Object interface {
 
 const (
 	DEFAULT_STRING_VALUE string = `!>dUmmy<!`
+	DEFAULT_INT64_VALUE  int64  = math.MinInt64
 )
 
 const (
@@ -52,7 +54,7 @@ func (re RequestError) Error() string {
 }
 
 func (d Duplicate) Error() string {
-	return fmt.Sprintf("Duplicate with id %v", d)
+	return fmt.Sprintf("Duplicate with id %d", d)
 }
 
 func (d Disabled) Error() string {

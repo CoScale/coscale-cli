@@ -19,7 +19,8 @@ import (
 )
 
 const (
-	DEFAULT_FLAG_VALUE string = api.DEFAULT_STRING_VALUE
+	DEFAULT_STRING_FLAG_VALUE string = api.DEFAULT_STRING_VALUE
+	DEFAULT_INT64_FLAG_VALUE  int64  = api.DEFAULT_INT64_VALUE
 )
 
 const (
@@ -34,7 +35,7 @@ type Command struct {
 	Name        string
 	UsageLine   string
 	Long        string
-	Deprecated	bool
+	Deprecated  bool
 	SubCommands []*Command
 	Capi        *api.Api //api connector
 	Flag        flag.FlagSet

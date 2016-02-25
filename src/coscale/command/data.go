@@ -39,11 +39,11 @@ Optional:
 			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier for metric.")
 			cmd.Flag.IntVar(&start, "start", 0, "The start timestamp in seconds ago.")
 			cmd.Flag.IntVar(&stop, "stop", 0, "The stop timestamp in seconds ago.")
-			cmd.Flag.StringVar(&subjectIds, "subjectIds", DEFAULT_FLAG_VALUE, "The subject string")
+			cmd.Flag.StringVar(&subjectIds, "subjectIds", DEFAULT_STRING_FLAG_VALUE, "The subject string")
 			cmd.Flag.StringVar(&aggregator, "aggregator", "AVG", "The data aggregator (AVG, MIN, MAX).")
 			cmd.Flag.BoolVar(&aggregateSubjects, "aggregateSubjects", false, "Boolean that indicates if the aggregated value over all subjectIds should be returned.")
 			cmd.ParseArgs(args)
-			if subjectIds == DEFAULT_FLAG_VALUE || id == -1 {
+			if subjectIds == DEFAULT_STRING_FLAG_VALUE || id == -1 {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
@@ -91,17 +91,17 @@ Deprecated:
 
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
 
-			cmd.Flag.StringVar(&datapoint, "datapoint", DEFAULT_FLAG_VALUE, "")
-			cmd.Flag.StringVar(&data, "data", DEFAULT_FLAG_VALUE, "")
+			cmd.Flag.StringVar(&datapoint, "datapoint", DEFAULT_STRING_FLAG_VALUE, "")
+			cmd.Flag.StringVar(&data, "data", DEFAULT_STRING_FLAG_VALUE, "")
 			cmd.ParseArgs(args)
 
-			if datapoint == DEFAULT_FLAG_VALUE && data == DEFAULT_FLAG_VALUE {
+			if datapoint == DEFAULT_STRING_FLAG_VALUE && data == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
 
 			timeInSecAgo := false
-			if data == DEFAULT_FLAG_VALUE {
+			if data == DEFAULT_STRING_FLAG_VALUE {
 				timeInSecAgo = true
 				data = datapoint
 			}

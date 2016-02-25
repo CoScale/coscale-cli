@@ -39,13 +39,13 @@ Only one of them is necessary to be specified
 			var name string
 			var id int64
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_FLAG_VALUE, "Name for the object")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the object")
 			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
 			cmd.ParseArgs(args)
 
 			if id != -1 {
 				cmd.PrintResult(cmd.Capi.GetObject(objectName, id))
-			} else if name != DEFAULT_FLAG_VALUE {
+			} else if name != DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintResult(cmd.Capi.GetObjectByName(objectName, name))
 			} else {
 				cmd.PrintUsage()
@@ -73,14 +73,14 @@ Only one of them is necessary to be specified
 			var name string
 			var id int64
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_FLAG_VALUE, "Name for the object")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the object")
 			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
 			cmd.ParseArgs(args)
 
 			var err error
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef(objectName, id, object)
-			} else if name != DEFAULT_FLAG_VALUE {
+			} else if name != DEFAULT_STRING_FLAG_VALUE {
 				err = cmd.Capi.GetObejctRefByName(objectName, name, object)
 			} else {
 				cmd.PrintUsage()
@@ -121,14 +121,14 @@ Mandatory:
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
 			cmd.Flag.Int64Var(&idGroup, "idGroup", -1, "")
 			cmd.Flag.Int64Var(&idObject, fmt.Sprintf("id%s", capitalize(objectName)), -1, "")
-			cmd.Flag.StringVar(&nameGroup, "nameGroup", DEFAULT_FLAG_VALUE, "")
-			cmd.Flag.StringVar(&nameObject, fmt.Sprintf("name%s", capitalize(objectName)), DEFAULT_FLAG_VALUE, "")
+			cmd.Flag.StringVar(&nameGroup, "nameGroup", DEFAULT_STRING_FLAG_VALUE, "")
+			cmd.Flag.StringVar(&nameObject, fmt.Sprintf("name%s", capitalize(objectName)), DEFAULT_STRING_FLAG_VALUE, "")
 			cmd.ParseArgs(args)
 
 			var err error
 			if idObject != -1 {
 				err = cmd.Capi.GetObjectRef(objectName, idObject, object)
-			} else if nameObject != DEFAULT_FLAG_VALUE {
+			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
 				err = cmd.Capi.GetObejctRefByName(objectName, nameObject, object)
 			} else {
 				cmd.PrintUsage()
@@ -139,7 +139,7 @@ Mandatory:
 			}
 			if idGroup != -1 {
 				err = cmd.Capi.GetObjectRef(fmt.Sprintf("%sgroup", objectName), idGroup, group)
-			} else if nameObject != DEFAULT_FLAG_VALUE {
+			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
 				err = cmd.Capi.GetObejctRefByName(fmt.Sprintf("%sgroup", objectName), nameObject, group)
 			} else {
 				cmd.PrintUsage()
@@ -180,14 +180,14 @@ Mandatory:
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
 			cmd.Flag.Int64Var(&idGroup, "idGroup", -1, "")
 			cmd.Flag.Int64Var(&idObject, fmt.Sprintf("id%s", capitalize(objectName)), -1, "")
-			cmd.Flag.StringVar(&nameGroup, "nameGroup", DEFAULT_FLAG_VALUE, "")
-			cmd.Flag.StringVar(&nameObject, fmt.Sprintf("name%s", capitalize(objectName)), DEFAULT_FLAG_VALUE, "")
+			cmd.Flag.StringVar(&nameGroup, "nameGroup", DEFAULT_STRING_FLAG_VALUE, "")
+			cmd.Flag.StringVar(&nameObject, fmt.Sprintf("name%s", capitalize(objectName)), DEFAULT_STRING_FLAG_VALUE, "")
 			cmd.ParseArgs(args)
 
 			var err error
 			if idObject != -1 {
 				err = cmd.Capi.GetObjectRef(objectName, idObject, object)
-			} else if nameObject != DEFAULT_FLAG_VALUE {
+			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
 				err = cmd.Capi.GetObejctRefByName(objectName, nameObject, object)
 			} else {
 				cmd.PrintUsage()
@@ -198,7 +198,7 @@ Mandatory:
 			}
 			if idGroup != -1 {
 				err = cmd.Capi.GetObjectRef(fmt.Sprintf("%sgroup", objectName), idGroup, group)
-			} else if nameObject != DEFAULT_FLAG_VALUE {
+			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
 				err = cmd.Capi.GetObejctRefByName(fmt.Sprintf("%sgroup", objectName), nameObject, group)
 			} else {
 				cmd.PrintUsage()

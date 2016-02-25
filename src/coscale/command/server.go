@@ -32,13 +32,13 @@ Optional:
 		Run: func(cmd *Command, args []string) {
 			var name, description, serverType, source string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_FLAG_VALUE, "Name for the server.")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the server.")
 			cmd.Flag.StringVar(&description, "description", "", "Description for the server.")
 			cmd.Flag.StringVar(&serverType, "serverType", "", "Describes the type of server.")
 			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the server.")
 			cmd.ParseArgs(args)
 
-			if name == DEFAULT_FLAG_VALUE {
+			if name == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
@@ -70,11 +70,11 @@ The name or id should be specified
 			var name, description, Type, source, state string
 			var id int64
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_FLAG_VALUE, "Name for the server.")
-			cmd.Flag.StringVar(&description, "description", DEFAULT_FLAG_VALUE, "Description for the server.")
-			cmd.Flag.StringVar(&Type, "type", DEFAULT_FLAG_VALUE, "Describes the type of server.")
-			cmd.Flag.StringVar(&source, "source", DEFAULT_FLAG_VALUE, "Describes who added the server.")
-			cmd.Flag.StringVar(&state, "state", DEFAULT_FLAG_VALUE, `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the server.")
+			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "Description for the server.")
+			cmd.Flag.StringVar(&Type, "type", DEFAULT_STRING_FLAG_VALUE, "Describes the type of server.")
+			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the server.")
+			cmd.Flag.StringVar(&state, "state", DEFAULT_STRING_FLAG_VALUE, `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
 			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
 			cmd.ParseArgs(args)
 
@@ -82,7 +82,7 @@ The name or id should be specified
 			var err error
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("server", id, serverObj)
-			} else if name != DEFAULT_FLAG_VALUE {
+			} else if name != DEFAULT_STRING_FLAG_VALUE {
 				err = cmd.Capi.GetObejctRefByName("server", name, serverObj)
 			} else {
 				cmd.PrintUsage()
@@ -93,19 +93,19 @@ The name or id should be specified
 			}
 
 			//update the server object values
-			if name != DEFAULT_FLAG_VALUE {
+			if name != DEFAULT_STRING_FLAG_VALUE {
 				serverObj.Name = name
 			}
-			if description != DEFAULT_FLAG_VALUE {
+			if description != DEFAULT_STRING_FLAG_VALUE {
 				serverObj.Description = description
 			}
-			if Type != DEFAULT_FLAG_VALUE {
+			if Type != DEFAULT_STRING_FLAG_VALUE {
 				serverObj.Type = Type
 			}
-			if source != DEFAULT_FLAG_VALUE {
+			if source != DEFAULT_STRING_FLAG_VALUE {
 				serverObj.Source = source
 			}
-			if state != DEFAULT_FLAG_VALUE {
+			if state != DEFAULT_STRING_FLAG_VALUE {
 				serverObj.State = state
 			}
 
@@ -143,14 +143,14 @@ Optional:
 		Run: func(cmd *Command, args []string) {
 			var name, description, Type, state, source string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_FLAG_VALUE, "Name for the server group.")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the server group.")
 			cmd.Flag.StringVar(&description, "description", "", "Description for the server group.")
 			cmd.Flag.StringVar(&Type, "type", "", "Describes the type of server group.")
 			cmd.Flag.StringVar(&state, "state", "", `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
 			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the server group.")
 			cmd.ParseArgs(args)
 
-			if name == DEFAULT_FLAG_VALUE {
+			if name == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
@@ -183,18 +183,18 @@ The name or id should be specified
 			var id int64
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
 			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier.")
-			cmd.Flag.StringVar(&name, "name", DEFAULT_FLAG_VALUE, "Name for the server group.")
-			cmd.Flag.StringVar(&description, "description", DEFAULT_FLAG_VALUE, "Description for the server group.")
-			cmd.Flag.StringVar(&Type, "type", DEFAULT_FLAG_VALUE, "Describes the type of server group.")
-			cmd.Flag.StringVar(&state, "state", DEFAULT_FLAG_VALUE, `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
-			cmd.Flag.StringVar(&source, "source", DEFAULT_FLAG_VALUE, "Describes who added the server. Can be chosen by the user.")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the server group.")
+			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "Description for the server group.")
+			cmd.Flag.StringVar(&Type, "type", DEFAULT_STRING_FLAG_VALUE, "Describes the type of server group.")
+			cmd.Flag.StringVar(&state, "state", DEFAULT_STRING_FLAG_VALUE, `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
+			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the server. Can be chosen by the user.")
 			cmd.ParseArgs(args)
 
 			var serverGroupObj = &api.ServerGroup{}
 			var err error
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("servergroup", id, serverGroupObj)
-			} else if name != DEFAULT_FLAG_VALUE {
+			} else if name != DEFAULT_STRING_FLAG_VALUE {
 				err = cmd.Capi.GetObejctRefByName("servergroup", name, serverGroupObj)
 			} else {
 				cmd.PrintUsage()
@@ -205,19 +205,19 @@ The name or id should be specified
 			}
 
 			//update the server object values
-			if name != DEFAULT_FLAG_VALUE {
+			if name != DEFAULT_STRING_FLAG_VALUE {
 				serverGroupObj.Name = name
 			}
-			if description != DEFAULT_FLAG_VALUE {
+			if description != DEFAULT_STRING_FLAG_VALUE {
 				serverGroupObj.Description = description
 			}
-			if Type != DEFAULT_FLAG_VALUE {
+			if Type != DEFAULT_STRING_FLAG_VALUE {
 				serverGroupObj.Type = Type
 			}
-			if source != DEFAULT_FLAG_VALUE {
+			if source != DEFAULT_STRING_FLAG_VALUE {
 				serverGroupObj.Source = source
 			}
-			if state != DEFAULT_FLAG_VALUE {
+			if state != DEFAULT_STRING_FLAG_VALUE {
 				serverGroupObj.State = state
 			}
 

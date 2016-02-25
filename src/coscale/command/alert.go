@@ -24,11 +24,11 @@ Optional:
 		Run: func(cmd *Command, args []string) {
 			var filter string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&filter, "filter", DEFAULT_FLAG_VALUE, "List actions filtered by unresolved or by unacknowledged.")
+			cmd.Flag.StringVar(&filter, "filter", DEFAULT_STRING_FLAG_VALUE, "List actions filtered by unresolved or by unacknowledged.")
 			cmd.ParseArgs(args)
 
 			switch filter {
-			case DEFAULT_FLAG_VALUE:
+			case DEFAULT_STRING_FLAG_VALUE:
 				cmd.PrintResult(cmd.Capi.GetObjects(alertObjectName))
 			case "unresolved":
 				cmd.PrintResult(cmd.Capi.GetAlertsBy("selectByResolved"))

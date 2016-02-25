@@ -19,13 +19,13 @@ func (e Event) GetId() int64 {
 
 // EventData describes the event data uploaded to api
 type EventData struct {
-	ID int64
-	Timestamp int64
-	Stoptime int64
-	Message string
-	Attribute string
-	Subject string
-	Version int64
+	ID         int64
+	Timestamp  int64
+	Stoptime   int64
+	Message    string
+	Attribute  string
+	Subject    string
+	Version    int64
 	UpdateTime int64
 }
 
@@ -86,10 +86,14 @@ func (api *Api) InsertEventData(id int64, message, subject, attribute string, ti
 	data := map[string][]string{
 		"message":   {message},
 		"timestamp": {fmt.Sprintf("%d", timestamp)},
-		"stopTime":  {fmt.Sprintf("%d", stopTime)},
 		"subject":   {subject},
 		"attribute": {attribute},
 	}
+	// add stoptime only if is set
+	if stopTime != DEFAULT_INT64_VALUE {
+		data["stopTime"] = []string{fmt.Sprintf("%d", stopTime)}
+	}
+
 	var result string
 	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/events/%d/data/", api.appID, id), data, true, &result); err != nil {
 		return "", err
@@ -97,14 +101,17 @@ func (api *Api) InsertEventData(id int64, message, subject, attribute string, ti
 	return result, nil
 }
 
-func (api *Api) UpdateEventData(eventId, eventdataId int64, eventData *EventData) (string, error) {	
+func (api *Api) UpdateEventData(eventId, eventdataId int64, eventData *EventData) (string, error) {
 	data := map[string][]string{
 		"message":   {eventData.Message},
 		"timestamp": {fmt.Sprintf("%d", eventData.Timestamp)},
-		"stopTime":  {fmt.Sprintf("%d", eventData.Stoptime)},
 		"subject":   {eventData.Subject},
 		"attribute": {eventData.Attribute},
-		"version": {fmt.Sprintf("%d", eventData.Version)},
+		"version":   {fmt.Sprintf("%d", eventData.Version)},
+	}
+	// add stoptime only if is set
+	if eventData.Stoptime != DEFAULT_INT64_VALUE {
+		data["stopTime"] = []string{fmt.Sprintf("%d", eventData.Stoptime)}
 	}
 	var result string
 	if err := api.makeCall("PUT", fmt.Sprintf("/api/v1/app/%s/events/%d/data/%d/", api.appID, eventId, eventData.ID), data, true, &result); err != nil {
