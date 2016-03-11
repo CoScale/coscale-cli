@@ -1,0 +1,99 @@
+_coscale-cli()
+{
+    local object action cur
+    COMPREPLY=()
+    object="${COMP_WORDS[1]}"
+    action="${COMP_WORDS[2]}"
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    opts="event server servergroup metric metricgroup data alert config"
+    auth="--api-url --app-id --access-token --rawOutput"
+
+    case "${object}" in
+        event)
+            case "${action}" in
+                list)          opts="${auth}" ;;
+                get)           opts="--id --name ${auth}" ;;
+                delete)        opts="--id --name ${auth}" ;;
+                new)           opts="--name --description --attributeDescriptions --source ${auth}" ;;
+                update)        opts="--id --name --description --attributeDescriptions --source ${auth}" ;;
+                newdata)       opts="--name --id --message --subject --attribute --timestamp --stopTime ${auth}" ;;
+                updatedata)    opts="--name --id --dataid --message --subject --attribute --timestamp --stopTime ${auth}" ;;
+                deletedata)    opts="--id --dataid ${auth}" ;;
+                *)             opts="list get delete new update newdata updatedata deletedata" ;;
+            esac
+            ;;
+        server)
+            case "${action}" in
+                list)          opts="${auth}" ;;
+                get)           opts="--id --name ${auth}" ;;
+                delete)        opts="--id --name ${auth}" ;;
+                new)           opts="--name --description --serverType --source ${auth}" ;;
+                update)        opts="--name --id --description --serverType --state --source ${auth}" ;;
+                *)             opts="list get delete new update" ;;
+            esac
+            ;;
+        servergroup)
+            case "${action}" in
+                list)          opts="${auth}" ;;
+                get)           opts="--id --name ${auth}" ;;
+                delete)        opts="--id --name ${auth}" ;;
+                new)           opts="--name --description --type --state --source ${auth}" ;;
+                update)        opts="--name --id --description --type --state --source ${auth}" ;;
+                addServer)     opts="--idServer --nameServer --idGroup --nameGroup ${auth}" ;;
+                deleteServer)  opts="--idServer --nameServer --idGroup --nameGroup ${auth}" ;;
+                *)             opts="list get delete new update addServer deleteServer" ;;
+            esac
+            ;;
+        metric)
+            case "${action}" in
+                list)          opts="${auth}" ;;
+                listbygroup)   opts="--id --name ${auth}" ;;
+                new)           opts="--name --dataType --subject --period --description --unit --attachTo --source ${auth}" ;;
+                update)        opts="--name --id --description --dataType --subject --unit --period --attachTo --source ${auth}" ;;
+                *)             opts="list listbygroup new update"
+            esac
+            ;;
+        metricgroup)
+            case "${action}" in
+                list)          opts="${auth}" ;;
+                get)           opts="--id --name ${auth}" ;;
+                addMetric)     opts="--idMetric --nameMetric --idGroup --nameGroup ${auth}" ;;
+                deleteMetric)  opts="--idMetric --nameMetric --idGroup --nameGroup ${auth}" ;;
+                new)           opts="--name --subject --description --state --source ${auth}" ;;
+                update)        opts="--name --id --description --type --state --source ${auth}" ;;
+                *)             opts="list get addMetric deleteMetric new update"
+            esac
+            ;;
+        data)
+            case "${action}" in
+                get)           opts="--id --subjectIds --start --stop --aggregator --aggregateSubjects ${auth}" ;;
+                insert)        opts="--data ${auth}" ;;
+                *)             opts="get insert"
+            esac
+            ;;
+        alert)
+            case "${action}" in
+                list)          opts="${auth}" ;;
+                acknowledge)   opts="--id --name ${auth}" ;;
+                resolve)       opts="--id --name ${auth}" ;;
+                *)             opts="list acknowledge resolve"
+            esac            
+            ;;
+        config)
+            case "${action}" in
+                check)         opts="" ;;
+                set)           opts="--api-url --app-id --access-token" ;;
+                *)             opts="check set"
+            esac
+            ;;
+        *)
+        ;;
+    esac
+
+    COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+    return 0
+
+}
+complete -F _coscale-cli coscale-cli
+

@@ -48,7 +48,7 @@ func (api *Api) CreateMetric(name, description, datatype, unit, subject, source 
 		"source":      {source},
 	}
 	var result string
-	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/metrics/", api.appID), data, true, &result); err != nil {
+	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/metrics/", api.AppID), data, true, &result); err != nil {
 		if duplicate, id := IsDuplicate(err); duplicate {
 			return api.GetObject("metric", id)
 		}
@@ -68,7 +68,7 @@ func (api *Api) UpdateMetric(metric *Metric) (string, error) {
 		"version":     {fmt.Sprintf("%d", metric.Version)},
 	}
 	var result string
-	if err := api.makeCall("PUT", fmt.Sprintf("/api/v1/app/%s/metrics/%d/", api.appID, metric.ID), data, true, &result); err != nil {
+	if err := api.makeCall("PUT", fmt.Sprintf("/api/v1/app/%s/metrics/%d/", api.AppID, metric.ID), data, true, &result); err != nil {
 		return "", err
 	}
 	return api.GetObject("metric", metric.ID)
@@ -85,7 +85,7 @@ func (api *Api) CreateMetricGroup(name, description, Type, state, subject, sourc
 		"source":      {source},
 	}
 	var result string
-	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/metricgroups/", api.appID), data, true, &result); err != nil {
+	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/metricgroups/", api.AppID), data, true, &result); err != nil {
 		if duplicate, id := IsDuplicate(err); duplicate {
 			return api.GetObject("metricgroup", id)
 		}
@@ -104,7 +104,7 @@ func (api *Api) UpdateMetricGroup(metricGroup *MetricGroup) (string, error) {
 		"source":      {metricGroup.Source},
 	}
 	var result string
-	if err := api.makeCall("PUT", fmt.Sprintf("/api/v1/app/%s/metricgroups/%d/", api.appID, metricGroup.ID), data, true, &result); err != nil {
+	if err := api.makeCall("PUT", fmt.Sprintf("/api/v1/app/%s/metricgroups/%d/", api.AppID, metricGroup.ID), data, true, &result); err != nil {
 		return "", err
 	}
 	return api.GetObject("metricgroup", metricGroup.ID)
@@ -113,7 +113,7 @@ func (api *Api) UpdateMetricGroup(metricGroup *MetricGroup) (string, error) {
 //GetMetricsByGroup will return all the metrics from a metricgroup
 func (api *Api) GetMetricsByGroup(metricGroup *MetricGroup) (string, error) {
 	var result string
-	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/metricgroups/%d/metrics/", api.appID, metricGroup.GetId()), nil, true, &result); err != nil {
+	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/metricgroups/%d/metrics/", api.AppID, metricGroup.GetId()), nil, true, &result); err != nil {
 		return "", err
 	}
 	return result, nil

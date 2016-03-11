@@ -121,7 +121,7 @@ func (api *Api) InsertData(data []*ApiData) (string, error) {
 		"data": {apiDataToString(data)},
 	}
 	var result string
-	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/data/", api.appID), postData, true, &result); err != nil {
+	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/data/", api.AppID), postData, true, &result); err != nil {
 		return "", err
 	}
 
@@ -155,7 +155,7 @@ func (api *Api) GetData(start, stop int, metricId int64, subjectIds, aggregator 
 		"data": {getBatchData(start, stop, metricId, subjectIds, aggregator, aggregateSubjects)},
 	}
 	var result string
-	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/data/getBatch/", api.appID), postData, true, &result); err != nil {
+	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/data/getBatch/", api.AppID), postData, true, &result); err != nil {
 		return "", err
 	}
 	return result, nil

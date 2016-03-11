@@ -51,7 +51,7 @@ func (api *Api) CreateServer(name string, description string, serverType, source
 		"source":      {source},
 	}
 	var result string
-	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/servers/", api.appID), data, true, &result); err != nil {
+	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/servers/", api.AppID), data, true, &result); err != nil {
 		if duplicate, id := IsDuplicate(err); duplicate {
 			return api.GetObject("server", id)
 		}
@@ -70,7 +70,7 @@ func (api *Api) UpdateServer(server *Server) (string, error) {
 		"version":     {strconv.FormatInt(server.Version, 10)},
 	}
 	var result string
-	if err := api.makeCall("PUT", fmt.Sprintf("/api/v1/app/%s/servers/%d/", api.appID, server.ID), data, true, &result); err != nil {
+	if err := api.makeCall("PUT", fmt.Sprintf("/api/v1/app/%s/servers/%d/", api.AppID, server.ID), data, true, &result); err != nil {
 		return "", err
 	}
 	return api.GetObject("server", server.ID)
@@ -87,7 +87,7 @@ func (api *Api) CreateServerGroup(name, description, Type, state, source string)
 	}
 
 	var result string
-	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/servergroups/", api.appID), data, true, &result); err != nil {
+	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/servergroups/", api.AppID), data, true, &result); err != nil {
 		if duplicate, id := IsDuplicate(err); duplicate {
 			return api.GetObject("servergroup", id)
 		}
@@ -107,7 +107,7 @@ func (api *Api) UpdateServerGroup(serverGroup *ServerGroup) (string, error) {
 		"version":     {strconv.FormatInt(serverGroup.Version, 10)},
 	}
 	var result string
-	if err := api.makeCall("PUT", fmt.Sprintf("/api/v1/app/%s/servergroups/%d/", api.appID, serverGroup.ID), data, true, &result); err != nil {
+	if err := api.makeCall("PUT", fmt.Sprintf("/api/v1/app/%s/servergroups/%d/", api.AppID, serverGroup.ID), data, true, &result); err != nil {
 		return "", err
 	}
 	return api.GetObject("servergroup", serverGroup.ID)

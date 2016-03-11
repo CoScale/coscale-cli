@@ -36,6 +36,7 @@ type NotFoundError string
 type RequestError string
 type Duplicate int64
 type Disabled string
+type InvalidConfig string
 
 func (ue AuthenticationError) Error() string {
 	return string(ue)
@@ -59,6 +60,10 @@ func (d Duplicate) Error() string {
 
 func (d Disabled) Error() string {
 	return string(d)
+}
+
+func (i InvalidConfig) Error() string {
+	return string(i)
 }
 
 // Checks if an error is a AuthenticationError.
@@ -95,18 +100,30 @@ func IsDisabled(err error) bool {
 	return ok
 }
 
+// Check if an error is caused by an invalid api configuration.
+func IsInvalidConfig(err error) bool {
+	_, ok := err.(InvalidConfig)
+	return ok
+}
+
 type Api struct {
-	baseUrl      string
-	accessToken  string
-	token        string
-	appID        string
+	BaseUrl      string
+	AccessToken  string
+	AppID        string
 	rawOutput    bool
-	lastDataSent time.Time
+	token        string
+	validConfig  bool
 }
 
 // NewApi creates a new Api connector using an email and a password.
 func NewApi(baseUrl string, accessToken string, appID string, rawOutput bool) *Api {
-	api := &Api{baseUrl, accessToken, "", appID, rawOutput, time.Now()}
+	api := &Api{baseUrl, accessToken, appID, rawOutput, "", true}
+	return api
+}
+
+// NewApi creates a new Api connector using an email and a password.
+func NewFakeApi() *Api {
+	api := &Api{"", "", "", true, "", false}
 	return api
 }
 
@@ -207,11 +224,11 @@ type LoginData struct {
 func (api *Api) Login() error {
 
 	data := map[string][]string{
-		"accessToken": {api.accessToken},
+		"accessToken": {api.AccessToken},
 	}
 
 	var loginData LoginData
-	bytes, err := api.doHttpRequest("POST", fmt.Sprintf("%s/api/v1/app/%s/login/", api.baseUrl, api.appID), "", data, readWriteTimeout)
+	bytes, err := api.doHttpRequest("POST", fmt.Sprintf("%s/api/v1/app/%s/login/", api.BaseUrl, api.AppID), "", data, readWriteTimeout)
 	if err != nil {
 		return AuthenticationError(fmt.Sprintf("Authentication error: %s", err.Error()))
 	}
@@ -234,7 +251,7 @@ func (api *Api) makeRawCall(method string, uri string, data map[string][]string,
 	}
 
 	// Do the actual request.
-	bytes, err := api.doHttpRequest(method, api.baseUrl+uri, api.token, data, timeout)
+	bytes, err := api.doHttpRequest(method, api.BaseUrl + uri, api.token, data, timeout)
 	if err != nil {
 		if _, ok := err.(UnauthorizedError); ok {
 			// unauthorizedError: the token might have experied. Performing login again
@@ -243,7 +260,7 @@ func (api *Api) makeRawCall(method string, uri string, data map[string][]string,
 				api.token = ""
 				return nil, err
 			}
-			return api.doHttpRequest(method, api.baseUrl+uri, api.token, data, timeout)
+			return api.doHttpRequest(method, api.BaseUrl + uri, api.token, data, timeout)
 		}
 		return bytes, err
 	}
@@ -253,6 +270,10 @@ func (api *Api) makeRawCall(method string, uri string, data map[string][]string,
 
 // makeCall Make a call to the api and parse the json response into target.
 func (api *Api) makeCall(method string, uri string, data map[string][]string, jsonOut bool, target interface{}) error {
+	if !api.validConfig {
+		return InvalidConfig("Could not find valid authentication configuration.")
+	}
+
 	b, err := api.makeRawCall(method, uri, data, readWriteTimeout)
 	if err != nil {
 		return err

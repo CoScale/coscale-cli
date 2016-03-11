@@ -61,7 +61,7 @@ func (c *Command) Runnable() bool {
 }
 
 func (c *Command) GetSubCommand(args []string) *Command {
-	if len(args) < 1 {
+	if len(args) == 0 {
 		c.PrintUsage()
 	}
 	for _, cmd := range c.SubCommands {
@@ -69,7 +69,11 @@ func (c *Command) GetSubCommand(args []string) *Command {
 			return cmd
 		}
 	}
-	c.PrintUsage()
+	if args[0] == "help" {
+		c.PrintFullUsage()
+	} else {
+		c.PrintUsage()
+	}
 	return nil
 }
 
@@ -105,7 +109,12 @@ func capitalize(s string) string {
 }
 
 func (c *Command) PrintUsage() {
-	tmpl(os.Stderr, usageTemplate, c)
+	tmpl(os.Stderr, usageTemplate + usageLastLine, c)
+	os.Exit(2)
+}
+
+func (c *Command) PrintFullUsage() {
+	tmpl(os.Stderr, usageTemplate + usageOutputJson + "\n" + authInfo + usageLastLine, c)
 	os.Exit(2)
 }
 
@@ -114,11 +123,11 @@ func (c *Command) GetApi(baseUrl, accessToken, appId string, rawOutput bool) *ap
 	if accessToken == "" || appId == "" {
 		configPath, err := GetConfigPath()
 		if err != nil {
-			os.Exit(EXIT_FLAG_ERROR)
+			return api.NewFakeApi()
 		}
 		config, err := api.ReadApiConfiguration(configPath)
 		if err != nil {
-			c.PrintUsage()
+			return api.NewFakeApi()
 		}
 		baseUrl = config.BaseUrl
 		accessToken = config.AccessToken
@@ -128,9 +137,6 @@ func (c *Command) GetApi(baseUrl, accessToken, appId string, rawOutput bool) *ap
 }
 
 func (c *Command) ParseArgs(args []string) {
-	if len(args) > 0 && args[0] == "help" {
-		c.PrintUsage()
-	}
 	//add the flags for the api configuration
 	var baseUrl, accessToken, appId string
 	var rawOutput bool
@@ -144,13 +150,19 @@ func (c *Command) ParseArgs(args []string) {
 		fmt.Fprintf(os.Stderr, "Unknown field %s\n", unknownArgs[0])
 		os.Exit(EXIT_FLAG_ERROR)
 	}
-	c.Capi = c.GetApi(baseUrl, accessToken, appId, rawOutput)
+	c.Capi = c.GetApi(strings.Trim(baseUrl, "/"), accessToken, appId, rawOutput)
 }
 
 func (c *Command) PrintResult(result string, err error) {
 	if err == nil {
 		fmt.Fprintln(os.Stdout, result)
 		os.Exit(EXIT_SUCCESS)
+	} else if api.IsInvalidConfig(err) {
+		fmt.Printf(`coscale-cli could not find valid credentials.
+
+%s
+`, authInfo)
+		os.Exit(EXIT_FLAG_ERROR)
 	} else if api.IsAuthenticationError(err) {
 		fmt.Fprintln(os.Stderr, `{"msg":"Authentication failed!"}`)
 		os.Exit(EXIT_AUTHENTICATION_ERROR)
@@ -169,6 +181,19 @@ func GetErrorJson(err error) string {
 	return fmt.Sprintf(`{"msg":"%s"}`, err.Error())
 }
 
+var authInfo = `The authentication configuration can be written using
+    coscale-cli config set
+
+If you do not wish to create a configuration file containing your credentials,
+the credentials can also be provided on the command line using:
+	--api-url
+		Base url for the api (optional, default = "https://api.coscale.com").
+	--app-id
+		The application id.
+	--access-token
+		A valid access token for the given application.
+`
+
 var usageTemplate = `coscale-cli a tool for CoScale Api.
 
 Usage:
@@ -178,24 +203,19 @@ Usage:
 
 {{.Long | trim}}{{else}}
 {{.Name | printf "Actions for command \"%s\":"}}
-{{range .SubCommands}}{{if not .Deprecated}}
+	help
+			Show more information.{{range .SubCommands}}{{if not .Deprecated}}
 	{{.Name | printf "%s"}}
 			{{.UsageLine | printf "%-11s"}}{{end}}{{end}}
     {{end}}
+`
 
+var usageOutputJson = `
 The json objects are returned formatted by default, but can be returned on 1 line by using:
 	--rawOutput
-	
-By default the CoScale api credentials (authentication) will be taken from api.conf
-located in the same directory as the coscale-cli binary. If the file does not exist,
-the credentials can also be provided on the command line using:
-	--api-url
-		Base url for the api (optional, default = "https://api.coscale.com/").
-	--app-id
-		The application id.
-	--access-token
-		A valid access token for the given application.
+`
 
+var usageLastLine = `
 Use "coscale-cli [object] <help>" for more information about a command.
 `
 
@@ -204,14 +224,12 @@ func GetConfigPath() (c string, e error) {
 	command := os.Args[0]
 	var configFile, backwardsConfigFile, dir, cmdName, carriageReturn string
 	var err error
+	configFile = "api.conf"
+	backwardsConfigFile = filepath.Join("etc", "api.conf")
 	if runtime.GOOS == "windows" {
-		configFile = "api.conf"
-		backwardsConfigFile = "api.conf"
 		cmdName = "where"
 		carriageReturn = "\r\n"
 	} else {
-		configFile = filepath.Join("etc", "api.conf")
-		backwardsConfigFile = "api.conf" // once we had api.conf in the same folder as cli executable
 		cmdName = "which"
 		carriageReturn = "\n"
 	}
@@ -247,12 +265,12 @@ func GetConfigPath() (c string, e error) {
 		return configPath, nil
 	}
 	// try the backwards compatible approach
-	configPath = filepath.Join(dir, backwardsConfigFile)
-	_, err = os.Stat(configPath)
+	backupConfigPath := filepath.Join(dir, backwardsConfigFile)
+	_, err = os.Stat(backupConfigPath)
 	if err == nil {
-		return configPath, nil
+		return backupConfigPath, nil
 	}
-	return "", err
+	return configPath, err
 }
 
 // GetCommandOutput returns stdout of command as a string

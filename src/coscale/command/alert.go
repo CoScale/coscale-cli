@@ -42,7 +42,7 @@ Optional:
 	},
 	{
 		Name:      "acknowledge",
-		UsageLine: "alert acknowledge (--id | --name)",
+		UsageLine: "alert acknowledge (--id)",
 		Long: `
 Acknowledge an alert.
 
@@ -50,9 +50,6 @@ The flags for acknowledge alert action are:
 Mandatory:
 	--id
 		The id of the alert.
-	or
-	--name
-		The name of the alert.
 `,
 		Run: func(cmd *Command, args []string) {
 			var id int64
@@ -73,7 +70,7 @@ Mandatory:
 	},
 	{
 		Name:      "resolve",
-		UsageLine: "alert resolve (--id | --name)",
+		UsageLine: "alert resolve (--id)",
 		Long: `
 Resolve an alert.
 
@@ -81,9 +78,6 @@ The flags for resolve alert action are:
 Mandatory:
 	--id
 		The id of the alert.
-	or 
-	--name
-		The name of the alert.
 `,
 		Run: func(cmd *Command, args []string) {
 			var id int64
