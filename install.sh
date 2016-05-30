@@ -49,7 +49,7 @@ read -i "$COSCALE_APPID" -p "Please enter your application id: " -e -r COSCALE_A
 read -i "$COSCALE_TOKEN" -p "Please enter your access token: " -e -r COSCALE_TOKEN
 
 read -i "$PATH_INSTALL" -p "Installation path: " -e -r PATH_INSTALL
-PATH_INSTALL=$(readlink -f $PATH_INSTALL)
+PATH_INSTALL=$(readlink -f $PATH_INSTALL || echo $PATH_INSTALL)
 
 if ask_yesno "Create a symlink [$PATH_SYMLINK]?"; then
     SYMLINK="true"
