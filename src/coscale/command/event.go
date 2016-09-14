@@ -11,7 +11,7 @@ var EventObject = NewCommand(eventObjectName, "event <action> [--<field>='<data>
 var EventActions = []*Command{
 	ListCmd(eventObjectName),
 	GetCmd(eventObjectName),
-	DeleteCmd(eventObjectName, &api.Event{}),
+	DeleteCmd(&api.Event{}, eventObjectName),
 	{
 		Name:      "new",
 		UsageLine: "event new (--name) [--description --attributeDescriptions --source]",
@@ -32,9 +32,10 @@ Optional:
 		Describes who added the event. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
-			var name, description, attributeDescriptions, source string
+			var name, eventType, description, attributeDescriptions, source string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "specify the event name of the event")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "specify the name of the event")
+			cmd.Flag.StringVar(&eventType, "type", "", "specify the type of the event")
 			cmd.Flag.StringVar(&description, "description", "", "specify the description of the event")
 			cmd.Flag.StringVar(&attributeDescriptions, "attributeDescriptions", "[]", "")
 			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the event")
@@ -44,7 +45,7 @@ Optional:
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
-			cmd.PrintResult(cmd.Capi.CreateEvent(name, description, attributeDescriptions, source, ""))
+			cmd.PrintResult(cmd.Capi.CreateEvent(name, description, attributeDescriptions, source, eventType))
 		},
 	},
 	{
@@ -67,10 +68,11 @@ The name or id should be specified
 		Describes who added the event. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
-			var name, description, attributeDescriptions, source string
+			var name, eventType, description, attributeDescriptions, source string
 			var id int64
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "specify the event name of the event")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "specify the name of the event")
+			cmd.Flag.StringVar(&eventType, "type", DEFAULT_STRING_FLAG_VALUE, "specify the type of the event")
 			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "specify the description of the event")
 			cmd.Flag.StringVar(&attributeDescriptions, "attributeDescriptions", DEFAULT_STRING_FLAG_VALUE, "")
 			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the event")
@@ -102,6 +104,10 @@ The name or id should be specified
 			}
 			if source != DEFAULT_STRING_FLAG_VALUE {
 				eventObj.Source = source
+			}
+
+			if eventType != DEFAULT_STRING_FLAG_VALUE {
+				eventObj.Type = eventType
 			}
 
 			cmd.PrintResult(cmd.Capi.UpdateEvent(eventObj))

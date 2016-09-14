@@ -9,7 +9,7 @@ var ServerObject = NewCommand("server", "server <action> [--<field>='<data>']", 
 var ServerActions = []*Command{
 	ListCmd("server"),
 	GetCmd("server"),
-	DeleteCmd("server", &api.Server{}),
+	DeleteCmd(&api.Server{}, "server"),
 	{
 		Name:      "new",
 		UsageLine: "server new (--name) [--description --serverType --source]",
@@ -118,7 +118,7 @@ var ServerGroupObject = NewCommand("servergroup", "servergroup <action> [--<fiel
 var ServerGroupActions = []*Command{
 	ListCmd("servergroup"),
 	GetCmd("servergroup"),
-	DeleteCmd("servergroup", &api.ServerGroup{}),
+	DeleteCmd(&api.ServerGroup{}, "servergroup"),
 	{
 		Name:      "new",
 		UsageLine: `servergroup new (--name) [--description --type --state --source]`,

@@ -6,10 +6,25 @@ import (
 	"os"
 )
 
-func ListCmd(objectName string) *Command {
+// parseParams will be used in cases that we want
+// to have a different command name than the name of the resource.
+func parseParams(params []string) (string, string) {
+	switch len(params) {
+	case 0:
+		return "", ""
+	case 1:
+		return params[0], params[0]
+	default:
+		return params[0], params[1]
+	}
+}
+
+// ListCmd is used to create a command that will list all the objects with a given type.
+func ListCmd(params ...string) *Command {
+	objectName, cmdName := parseParams(params)
 	return &Command{
 		Name:      "list",
-		UsageLine: fmt.Sprintf("%s list", objectName),
+		UsageLine: fmt.Sprintf("%s list", cmdName),
 		Long: fmt.Sprintf(`
 Get all %[1]ss from CoScale Api.
 `, objectName),
@@ -21,20 +36,22 @@ Get all %[1]ss from CoScale Api.
 	}
 }
 
-func GetCmd(objectName string) *Command {
+// GetCmd is used to create a command that will get an object with a given type.
+func GetCmd(params ...string) *Command {
+	objectName, cmdName := parseParams(params)
 	return &Command{
 		Name:      "get",
-		UsageLine: fmt.Sprintf("%s get (--id | --name)", objectName),
+		UsageLine: fmt.Sprintf("%s get (--id | --name)", cmdName),
 		Long: fmt.Sprintf(`
 Get a CoScale %[1]s object by id or by name.
 
-The flags for %[1]s get action are:
+The flags for %[2]s get action are:
 Only one of them is necessary to be specified
 	--name 
 		specify the %[1]s name.
 	--id
 		specify the %[1]s id.
-`, objectName),
+`, objectName, cmdName),
 		Run: func(cmd *Command, args []string) {
 			var name string
 			var id int64
@@ -55,20 +72,22 @@ Only one of them is necessary to be specified
 	}
 }
 
-func DeleteCmd(objectName string, object api.Object) *Command {
+// DeleteCmd is used to create a command that will delete an object with a given type.
+func DeleteCmd(object api.Object, params ...string) *Command {
+	objectName, cmdName := parseParams(params)
 	return &Command{
 		Name:      "delete",
-		UsageLine: fmt.Sprintf("%s delete (--name | --id)", objectName),
+		UsageLine: fmt.Sprintf("%s delete (--name | --id)", cmdName),
 		Long: fmt.Sprintf(`
 Delete a %[1]s by the name or id.
 
-The flags for %[1]s delete action are:
+The flags for %[2]s delete action are:
 Only one of them is necessary to be specified
 	--name 
 		specify the %[1]s name.
 	--id
 		specify the %[1]s id.
-`, objectName),
+`, objectName, cmdName),
 		Run: func(cmd *Command, args []string) {
 			var name string
 			var id int64
@@ -94,6 +113,7 @@ Only one of them is necessary to be specified
 	}
 }
 
+// AddObjToGroupCmd is used create a command that will add an object to a group e.g. metric to metricgroup.
 func AddObjToGroupCmd(objectName string, object api.Object, group api.Object) *Command {
 	return &Command{
 		Name:      fmt.Sprintf("add%s", capitalize(objectName)),
@@ -153,6 +173,7 @@ Mandatory:
 	}
 }
 
+// DeleteObjFromGroupCmd is used create a command that will delete an object from a group e.g. metric to metricgroup.
 func DeleteObjFromGroupCmd(objectName string, object api.Object, group api.Object) *Command {
 	return &Command{
 		Name:      fmt.Sprintf("delete%s", capitalize(objectName)),

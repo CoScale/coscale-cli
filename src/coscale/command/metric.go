@@ -9,6 +9,7 @@ var MetricObject = NewCommand("metric", "metric <action> [--<field>='<data>']", 
 
 var MetricActions = []*Command{
 	ListCmd("metric"),
+	GetCmd("metric"),
 	{
 		Name:      "listbygroup",
 		UsageLine: `metric listbygroup (--id | --name)`,
