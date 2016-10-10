@@ -53,6 +53,8 @@ func (api *Api) GetObjectRefFromGroup(objectGroup, objectName string, groupID, o
 
 //GetObjectByName will return the object (json) specified by objectName and name
 func (api *Api) GetObjectByName(objectName string, name string) (string, error) {
+	// In go %% is % escaped, we need to escape the name to work with string fmt.
+	name = strings.Replace(name, "%", "%%", -1)
 	name = strings.Replace(name, " ", "%20", -1)
 	var result string
 	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/%ss/?selectByName=%s", api.AppID, objectName, name), nil, true, &result); err != nil {

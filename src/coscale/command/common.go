@@ -157,10 +157,11 @@ Mandatory:
 			if err != nil {
 				cmd.PrintResult("", err)
 			}
+
 			if idGroup != -1 {
 				err = cmd.Capi.GetObjectRef(fmt.Sprintf("%sgroup", objectName), idGroup, group)
 			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName(fmt.Sprintf("%sgroup", objectName), nameObject, group)
+				err = cmd.Capi.GetObejctRefByName(fmt.Sprintf("%sgroup", objectName), nameGroup, group)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -220,7 +221,7 @@ Mandatory:
 			if idGroup != -1 {
 				err = cmd.Capi.GetObjectRef(fmt.Sprintf("%sgroup", objectName), idGroup, group)
 			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName(fmt.Sprintf("%sgroup", objectName), nameObject, group)
+				err = cmd.Capi.GetObejctRefByName(fmt.Sprintf("%sgroup", objectName), nameGroup, group)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)

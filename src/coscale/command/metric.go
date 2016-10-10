@@ -2,10 +2,21 @@ package command
 
 import (
 	"coscale/api"
+	"encoding/json"
 	"os"
 )
 
-var MetricObject = NewCommand("metric", "metric <action> [--<field>='<data>']", MetricActions)
+// metricSubCommands will contain subcommands for metric command and also actions for it.
+var metricSubCommands = append(MetricActions, []*Command{
+	// subcommands of metric
+	dimensionObject,
+}...)
+
+/**
+ * Metric Actions
+ */
+
+var MetricObject = NewCommand("metric", "metric <action> [--<field>='<data>']", metricSubCommands)
 
 var MetricActions = []*Command{
 	ListCmd("metric"),
@@ -96,6 +107,7 @@ Optional:
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
+
 			cmd.PrintResult(cmd.Capi.CreateMetric(name, description, dataType, unit, subject, source, period))
 		},
 	},
@@ -137,23 +149,22 @@ Optional:
 			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the metric.")
 			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "Description for the metric.")
 			cmd.Flag.StringVar(&dataType, "dataType", DEFAULT_STRING_FLAG_VALUE, `The following data types are defined: "LONG", "DOUBLE", "HISTOGRAM".`)
-			cmd.Flag.StringVar(&subject, "subject", "", `A metric is defined on either a "SERVER", "GROUP" or "APPLICATION".`)
+			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, `A metric is defined on either a "SERVER", "GROUP" or "APPLICATION".`)
 			cmd.Flag.StringVar(&unit, "unit", DEFAULT_STRING_FLAG_VALUE, "The unit for the metric.")
 			cmd.Flag.StringVar(&attachTo, "attachTo", "", "Describes what the relation of this Metric is.")
 			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the metric.")
 			cmd.Flag.IntVar(&period, "period", -1, "The amount of time (in seconds) between 2 data points.")
 			cmd.ParseArgs(args)
 
-			var metricObj = &api.Metric{}
 			var err error
-			if name == DEFAULT_STRING_FLAG_VALUE {
-				cmd.PrintUsage()
-				os.Exit(EXIT_FLAG_ERROR)
-			}
+			var metricObj = &api.Metric{}
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("metric", id, metricObj)
-			} else {
+			} else if name != DEFAULT_STRING_FLAG_VALUE {
 				err = cmd.Capi.GetObejctRefByName("metric", name, metricObj)
+			} else {
+				cmd.PrintUsage()
+				os.Exit(EXIT_FLAG_ERROR)
 			}
 			if err != nil {
 				cmd.PrintResult("", err)
@@ -174,6 +185,9 @@ Optional:
 			if source != DEFAULT_STRING_FLAG_VALUE {
 				metricObj.Source = source
 			}
+			if subject != DEFAULT_STRING_FLAG_VALUE {
+				metricObj.Subject = subject
+			}
 			if unit != DEFAULT_STRING_FLAG_VALUE {
 				metricObj.Unit = unit
 			}
@@ -192,7 +206,7 @@ var MetricGroupActions = []*Command{
 	DeleteObjFromGroupCmd("metric", &api.Metric{}, &api.MetricGroup{}),
 	{
 		Name:      "new",
-		UsageLine: `servergroup new (--name --subject) [--description --state --source]`,
+		UsageLine: `metricgroup new (--name --subject) [--description --state --source]`,
 		Long: `
 Create a new CoScale metricgroup object.
 
@@ -266,21 +280,15 @@ Optional:
 			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the metric group.")
 			cmd.ParseArgs(args)
 
-			if name == DEFAULT_STRING_FLAG_VALUE {
-				cmd.PrintUsage()
-				os.Exit(EXIT_FLAG_ERROR)
-			}
-
-			var metricGroupObj = &api.MetricGroup{}
 			var err error
-			if name == "" {
-				cmd.PrintUsage()
-				os.Exit(EXIT_FLAG_ERROR)
-			}
+			var metricGroupObj = &api.MetricGroup{}
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("metricgroup", id, metricGroupObj)
-			} else {
+			} else if name != DEFAULT_STRING_FLAG_VALUE {
 				err = cmd.Capi.GetObejctRefByName("metricgroup", name, metricGroupObj)
+			} else {
+				cmd.PrintUsage()
+				os.Exit(EXIT_FLAG_ERROR)
 			}
 			if err != nil {
 				cmd.PrintResult("", err)
@@ -303,6 +311,125 @@ Optional:
 				metricGroupObj.State = state
 			}
 			cmd.PrintResult(cmd.Capi.UpdateMetricGroup(metricGroupObj))
+		},
+	},
+}
+
+/**
+ * Dimension subcommand with actions.
+ */
+// Type will be a new subcommand of alert and it will have actions.
+var dimensionObjectName = "dimension"
+var dimensionObject = NewCommand(dimensionObjectName, "dimension <action> [--<field>='<data>']", dimensionActions)
+
+// DimensionActions will contain the actions for metric dimension subcommand.
+var dimensionActions = []*Command{
+	{
+		Name:      "new",
+		UsageLine: `metric dimension new (--name) [--id|--metric]`,
+		Long: `
+Create a new CoScale dimension object for a metric.
+
+Metric dimensions enables us to show metrics at different levels. For example for RabbitMQ
+we want to show the total number of queued messages, but we also want to be able to split these into the number of queued messages per queue.
+
+The flags for dimension new action are:
+
+Mandatory:
+	--name
+		Specify the name of the new metric dimension.
+Optional:
+	--id
+		Unique identifier for the metric.
+	or
+	--metric
+		Specify the name of the metric.
+`,
+		Run: func(cmd *Command, args []string) {
+			var name, metric string
+			var id int64
+			cmd.Flag.Usage = func() { cmd.PrintUsage() }
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Specify the name of the new metric dimension.")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier for the metric.")
+			cmd.Flag.StringVar(&metric, "metric", DEFAULT_STRING_FLAG_VALUE, "Specify the name of the metric.")
+
+			cmd.ParseArgs(args)
+
+			if name == DEFAULT_STRING_FLAG_VALUE {
+				cmd.PrintUsage()
+				os.Exit(EXIT_FLAG_ERROR)
+			}
+
+			var dimension string
+			var err error
+			// Create dimension.
+			dimension, err = cmd.Capi.CreateDimension(name)
+			if err != nil {
+				cmd.PrintResult("", err)
+			}
+			var dimensionObj *api.Dimension
+			if err := json.Unmarshal([]byte(dimension), &dimensionObj); err != nil {
+				cmd.PrintResult("", err)
+			}
+
+			// Get the metric.
+			if id == -1 && metric != DEFAULT_STRING_FLAG_VALUE {
+				var metricObj = &api.Metric{}
+				err = cmd.Capi.GetObejctRefByName("metric", metric, metricObj)
+				if err != nil {
+					cmd.PrintResult("", err)
+				}
+
+				id = metricObj.ID
+			}
+
+			// if no metric to asociate with the dimension do not continue.
+			if id == -1 {
+				cmd.PrintResult(dimension, nil)
+			}
+			// Associate dimension with the metric.
+			cmd.PrintResult(cmd.Capi.AddMetricDimension(id, dimensionObj.ID))
+		},
+	},
+	{
+		Name:      "list",
+		UsageLine: `metric dimension list (--metric|--metricId)`,
+		Long: `
+Get all the dimensions for a metric
+
+The flags for dimension list action are:
+
+Mandatory:
+	--metric
+		Specify the name of the metric.
+or
+	--metricId
+		Unique identifier for the metric.
+`,
+		Run: func(cmd *Command, args []string) {
+			var metric string
+			var metricID int64
+			cmd.Flag.Usage = func() { cmd.PrintUsage() }
+			cmd.Flag.StringVar(&metric, "metric", DEFAULT_STRING_FLAG_VALUE, "Specify the name of the metric.")
+			cmd.Flag.Int64Var(&metricID, "metricId", -1, "Unique identifier for the metric.")
+
+			cmd.ParseArgs(args)
+
+			var metricObj = &api.Metric{}
+			var err error
+			if metricID != -1 {
+				err = cmd.Capi.GetObjectRef("metric", metricID, metricObj)
+			} else if metric != DEFAULT_STRING_FLAG_VALUE {
+				err = cmd.Capi.GetObejctRefByName("metric", metric, metricObj)
+			} else {
+				cmd.PrintUsage()
+				os.Exit(EXIT_FLAG_ERROR)
+			}
+			if err != nil {
+				cmd.PrintResult("", err)
+			}
+
+			cmd.PrintResult(cmd.Capi.GetDimensions(metricObj.ID))
 		},
 	},
 }

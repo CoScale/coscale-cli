@@ -13,6 +13,7 @@ type Metric struct {
 	Period      int
 	Unit        string
 	Source      string
+	Subject     string
 	State       string
 	Version     int64
 }
@@ -64,6 +65,7 @@ func (api *Api) UpdateMetric(metric *Metric) (string, error) {
 		"dataType":    {metric.DataType},
 		"period":      {strconv.Itoa(metric.Period)},
 		"unit":        {metric.Unit},
+		"subject":     {metric.Subject},
 		"source":      {metric.Source},
 		"version":     {fmt.Sprintf("%d", metric.Version)},
 	}
@@ -100,8 +102,10 @@ func (api *Api) UpdateMetricGroup(metricGroup *MetricGroup) (string, error) {
 		"name":        {metricGroup.Name},
 		"description": {metricGroup.Description},
 		"type":        {metricGroup.Type},
+		"state":       {metricGroup.State},
 		"subject":     {metricGroup.Subject},
 		"source":      {metricGroup.Source},
+		"version":     {fmt.Sprintf("%d", metricGroup.Version)},
 	}
 	var result string
 	if err := api.makeCall("PUT", fmt.Sprintf("/api/v1/app/%s/metricgroups/%d/", api.AppID, metricGroup.ID), data, true, &result); err != nil {
@@ -114,6 +118,15 @@ func (api *Api) UpdateMetricGroup(metricGroup *MetricGroup) (string, error) {
 func (api *Api) GetMetricsByGroup(metricGroup *MetricGroup) (string, error) {
 	var result string
 	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/metricgroups/%d/metrics/", api.AppID, metricGroup.GetId()), nil, true, &result); err != nil {
+		return "", err
+	}
+	return result, nil
+}
+
+// AddMetricDimension adds a dimension to a metric
+func (api *Api) AddMetricDimension(metricID, dimensionID int64) (string, error) {
+	var result string
+	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/metrics/%d/dimensions/%d/", api.AppID, metricID, dimensionID), nil, true, &result); err != nil {
 		return "", err
 	}
 	return result, nil
