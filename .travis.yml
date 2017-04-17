@@ -1,0 +1,8 @@
+language: go
+sudo: false
+go:
+  - 1.5
+env:
+  - GOARCH=amd64    
+install:
+  - sh build.sh
