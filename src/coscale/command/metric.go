@@ -40,7 +40,7 @@ Mandatory:
 			var id int64
 			var name string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier.")
 			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the metric group.")
 
 			cmd.ParseArgs(args)
@@ -64,7 +64,7 @@ Mandatory:
 	},
 	{
 		Name:      "new",
-		UsageLine: `metric new (--name --dataType --subject) [--period --description --unit --attachTo --source]`,
+		UsageLine: `metric new (--name --dataType --subject) [--period --description --unit --attachTo]`,
 		Long: `
 Create a new CoScale metric object.
 
@@ -86,8 +86,6 @@ Optional:
 		The unit for the metric. This is shown on the axis in the widgets. [default: ""]
 	--attachTo
 		Describes what the relation of this Metric is. Options are SERVER, SERVERGROUP, APPLICATION, REQUEST, DATABASE, QUERY and ANALYSIS.
-	--source
-		Describes who added the metric. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, description, dataType, subject, unit, attachTo, source string
@@ -99,7 +97,7 @@ Optional:
 			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, `A metric is defined on either a "SERVER", "GROUP" or "APPLICATION".`)
 			cmd.Flag.StringVar(&unit, "unit", "", "The unit for the metric.")
 			cmd.Flag.StringVar(&attachTo, "attachTo", "", "Describes what the relation of this Metric is.")
-			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the metric.")
+			cmd.Flag.StringVar(&source, "source", "cli", "Deprecated.")
 			cmd.Flag.IntVar(&period, "period", 60, "The amount of time (in seconds) between 2 data points.")
 			cmd.ParseArgs(args)
 
@@ -108,12 +106,12 @@ Optional:
 				os.Exit(EXIT_FLAG_ERROR)
 			}
 
-			cmd.PrintResult(cmd.Capi.CreateMetric(name, description, dataType, unit, subject, source, period))
+			cmd.PrintResult(cmd.Capi.CreateMetric(name, description, dataType, unit, subject, period))
 		},
 	},
 	{
 		Name:      "update",
-		UsageLine: `metric update (--name | --id) [--description --dataType --subject --unit --period --attachTo --source]`,
+		UsageLine: `metric update (--name | --id) [--description --dataType --subject --unit --period --attachTo]`,
 		Long: `
 Update a CoScale metric object.
 
@@ -135,8 +133,6 @@ Optional:
 			The unit for the metric. This is shown on the axis in the widgets. [default: ""]
 	--attachTo
 			Describes what the relation of this Metric is. Options are SERVER, SERVERGROUP, APPLICATION, REQUEST, DATABASE, QUERY and ANALYSIS.
-	--source
-			Describes who added the metric. Can be chosen by the user. [default: "cli"]
 	--period
 			The amount of time (in seconds) between 2 data points. [default: 60]
 `,
@@ -145,14 +141,14 @@ Optional:
 			var period int
 			var id int64
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier.")
 			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the metric.")
 			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "Description for the metric.")
 			cmd.Flag.StringVar(&dataType, "dataType", DEFAULT_STRING_FLAG_VALUE, `The following data types are defined: "LONG", "DOUBLE", "HISTOGRAM".`)
 			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, `A metric is defined on either a "SERVER", "GROUP" or "APPLICATION".`)
 			cmd.Flag.StringVar(&unit, "unit", DEFAULT_STRING_FLAG_VALUE, "The unit for the metric.")
 			cmd.Flag.StringVar(&attachTo, "attachTo", "", "Describes what the relation of this Metric is.")
-			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the metric.")
+			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Deprecated.")
 			cmd.Flag.IntVar(&period, "period", -1, "The amount of time (in seconds) between 2 data points.")
 			cmd.ParseArgs(args)
 
@@ -182,9 +178,6 @@ Optional:
 			if period != -1 {
 				metricObj.Period = period
 			}
-			if source != DEFAULT_STRING_FLAG_VALUE {
-				metricObj.Source = source
-			}
 			if subject != DEFAULT_STRING_FLAG_VALUE {
 				metricObj.Subject = subject
 			}
@@ -206,7 +199,7 @@ var MetricGroupActions = []*Command{
 	DeleteObjFromGroupCmd("metric", &api.Metric{}, &api.MetricGroup{}),
 	{
 		Name:      "new",
-		UsageLine: `metricgroup new (--name --subject) [--description --state --source]`,
+		UsageLine: `metricgroup new (--name --subject) [--description --state]`,
 		Long: `
 Create a new CoScale metricgroup object.
 
@@ -224,8 +217,6 @@ Optional:
 		Describes the type of metric group.
 	--state
 		"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.
-	--source
-		Describes who added the metric group. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, description, Type, state, source, subject string
@@ -235,19 +226,19 @@ Optional:
 			cmd.Flag.StringVar(&Type, "type", "", "Describes the type of metric group.")
 			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, `The subject type of the metric group. "APPLICATION", "SERVERGROUP" or "SERVER".`)
 			cmd.Flag.StringVar(&state, "state", "ENABLED", `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
-			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the metric group.")
+			cmd.Flag.StringVar(&source, "source", "cli", "Deprecated.")
 			cmd.ParseArgs(args)
 
 			if name == DEFAULT_STRING_FLAG_VALUE || subject == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
-			cmd.PrintResult(cmd.Capi.CreateMetricGroup(name, description, Type, state, subject, source))
+			cmd.PrintResult(cmd.Capi.CreateMetricGroup(name, description, Type, state, subject))
 		},
 	},
 	{
 		Name:      "update",
-		UsageLine: `metricgroup update (--name | --id) [--description --type --state --source]`,
+		UsageLine: `metricgroup update (--name | --id) [--description --type --state]`,
 		Long: `
 Update a CoScale metricgroup object.
 
@@ -265,19 +256,17 @@ Optional:
 		Describes the type of metric group.
 	--state
 		"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.
-	--source
-		Describes who added the metric group. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var id int64
 			var name, description, Type, state, source string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier.")
 			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the metric group.")
 			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "Description for the metric group.")
 			cmd.Flag.StringVar(&Type, "type", DEFAULT_STRING_FLAG_VALUE, "Describes the type of metric group.")
 			cmd.Flag.StringVar(&state, "state", DEFAULT_STRING_FLAG_VALUE, `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
-			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the metric group.")
+			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Deprecated.")
 			cmd.ParseArgs(args)
 
 			var err error
@@ -303,9 +292,6 @@ Optional:
 			}
 			if Type != DEFAULT_STRING_FLAG_VALUE {
 				metricGroupObj.Type = Type
-			}
-			if source != DEFAULT_STRING_FLAG_VALUE {
-				metricGroupObj.Source = source
 			}
 			if state != DEFAULT_STRING_FLAG_VALUE {
 				metricGroupObj.State = state

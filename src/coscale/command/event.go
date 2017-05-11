@@ -14,7 +14,7 @@ var EventActions = []*Command{
 	DeleteCmd(&api.Event{}, eventObjectName),
 	{
 		Name:      "new",
-		UsageLine: "event new (--name) [--description --attributeDescriptions --source]",
+		UsageLine: "event new (--name) [--description --attributeDescriptions]",
 		Long: `
 Create new event category.
 
@@ -28,29 +28,27 @@ Optional:
 		specify the description of the event.
 	--attributeDescriptions
 		JSON string describing what items the "attribute" of an EventData instance belonging to this Event must have.  [default: "[]"]
-	--source
-		Describes who added the event. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, eventType, description, attributeDescriptions, source string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "specify the name of the event")
-			cmd.Flag.StringVar(&eventType, "type", "", "specify the type of the event")
-			cmd.Flag.StringVar(&description, "description", "", "specify the description of the event")
-			cmd.Flag.StringVar(&attributeDescriptions, "attributeDescriptions", "[]", "")
-			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the event")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Specify the name of the event.")
+			cmd.Flag.StringVar(&eventType, "type", "", "Specify the type of the event.")
+			cmd.Flag.StringVar(&description, "description", "", "Specify the description of the event.")
+			cmd.Flag.StringVar(&attributeDescriptions, "attributeDescriptions", "[]", "JSON string describing what items the attribute.")
+			cmd.Flag.StringVar(&source, "source", "cli", "Deprecated.")
 			cmd.ParseArgs(args)
 
 			if name == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
-			cmd.PrintResult(cmd.Capi.CreateEvent(name, description, attributeDescriptions, source, eventType))
+			cmd.PrintResult(cmd.Capi.CreateEvent(name, description, attributeDescriptions, eventType))
 		},
 	},
 	{
 		Name:      "update",
-		UsageLine: "event update (--name | --id) [--description --attributeDescriptions --source]",
+		UsageLine: "event update (--name | --id) [--description --attributeDescriptions]",
 		Long: `
 Update a CoScale event object.
 
@@ -64,18 +62,16 @@ The name or id should be specified
 		specify the description of the event.
 	--attributeDescriptions
 		JSON string describing what items the "attribute" of an EventData instance belonging to this Event must have.
-	--source
-		Describes who added the event. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, eventType, description, attributeDescriptions, source string
 			var id int64
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "specify the name of the event")
-			cmd.Flag.StringVar(&eventType, "type", DEFAULT_STRING_FLAG_VALUE, "specify the type of the event")
-			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "specify the description of the event")
-			cmd.Flag.StringVar(&attributeDescriptions, "attributeDescriptions", DEFAULT_STRING_FLAG_VALUE, "")
-			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the event")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Specify the name of the event.")
+			cmd.Flag.StringVar(&eventType, "type", DEFAULT_STRING_FLAG_VALUE, "Specify the type of the event.")
+			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "Specify the description of the event.")
+			cmd.Flag.StringVar(&attributeDescriptions, "attributeDescriptions", DEFAULT_STRING_FLAG_VALUE, "JSON string describing what items the attribute.")
+			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Deprecated.")
 			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
 			cmd.ParseArgs(args)
 
@@ -102,9 +98,6 @@ The name or id should be specified
 			if attributeDescriptions != DEFAULT_STRING_FLAG_VALUE {
 				eventObj.AttributeDescriptions = attributeDescriptions
 			}
-			if source != DEFAULT_STRING_FLAG_VALUE {
-				eventObj.Source = source
-			}
 
 			if eventType != DEFAULT_STRING_FLAG_VALUE {
 				eventObj.Type = eventType
@@ -125,13 +118,13 @@ Please use 'event newdata' instead.
 			var id, timestamp, stopTime int64
 			var name, message, subject, attribute string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "event name")
-			cmd.Flag.StringVar(&message, "message", DEFAULT_STRING_FLAG_VALUE, "message for the event data")
-			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, "subject for the event data")
-			cmd.Flag.StringVar(&attribute, "attribute", "{}", "JSON String detailing the progress of the event")
-			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
-			cmd.Flag.Int64Var(&timestamp, "timestamp", 0, "Timestamp in seconds ago")
-			cmd.Flag.Int64Var(&stopTime, "stopTime", DEFAULT_INT64_FLAG_VALUE, "The time at which the EventData stopped in seconds ago")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Event name.")
+			cmd.Flag.StringVar(&message, "message", DEFAULT_STRING_FLAG_VALUE, "Message for the event data.")
+			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, "Subject for the event data.")
+			cmd.Flag.StringVar(&attribute, "attribute", "{}", "JSON String detailing the progress of the event.")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier.")
+			cmd.Flag.Int64Var(&timestamp, "timestamp", 0, "Timestamp in seconds ago.")
+			cmd.Flag.Int64Var(&stopTime, "stopTime", DEFAULT_INT64_FLAG_VALUE, "The time at which the EventData stopped in seconds ago.")
 			cmd.ParseArgs(args)
 
 			var eventObj = &api.Event{}
@@ -188,13 +181,13 @@ Optional:
 			var id, timestamp, stopTime int64
 			var name, message, subject, attribute string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "event name")
-			cmd.Flag.StringVar(&message, "message", DEFAULT_STRING_FLAG_VALUE, "message for the event data")
-			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, "subject for the event data")
-			cmd.Flag.StringVar(&attribute, "attribute", "{}", "JSON String detailing the progress of the event")
-			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
-			cmd.Flag.Int64Var(&timestamp, "timestamp", 0, "Timestamp in seconds ago")
-			cmd.Flag.Int64Var(&stopTime, "stopTime", DEFAULT_INT64_FLAG_VALUE, "The time at which the EventData stopped in seconds ago")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Event name.")
+			cmd.Flag.StringVar(&message, "message", DEFAULT_STRING_FLAG_VALUE, "Message for the event data.")
+			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, "Subject for the event data.")
+			cmd.Flag.StringVar(&attribute, "attribute", "{}", "JSON String detailing the progress of the event.")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier.")
+			cmd.Flag.Int64Var(&timestamp, "timestamp", 0, "Timestamp in seconds ago.")
+			cmd.Flag.Int64Var(&stopTime, "stopTime", DEFAULT_INT64_FLAG_VALUE, "The time at which the EventData stopped in seconds ago.")
 			cmd.ParseArgs(args)
 
 			var eventObj = &api.Event{}
@@ -253,14 +246,14 @@ Optional:
 			var id, dataid, timestamp, stopTime int64
 			var name, message, subject, attribute string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "event name")
-			cmd.Flag.StringVar(&message, "message", DEFAULT_STRING_FLAG_VALUE, "message for the event data")
-			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, "subject for the event data")
-			cmd.Flag.StringVar(&attribute, "attribute", "{}", "JSON String detailing the progress of the event")
-			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
-			cmd.Flag.Int64Var(&dataid, "dataid", -1, "Unique identifier of the event data")
-			cmd.Flag.Int64Var(&timestamp, "timestamp", DEFAULT_INT64_FLAG_VALUE, "Timestamp in seconds ago")
-			cmd.Flag.Int64Var(&stopTime, "stopTime", DEFAULT_INT64_FLAG_VALUE, "The time at which the EventData stopped in seconds ago")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Event name.")
+			cmd.Flag.StringVar(&message, "message", DEFAULT_STRING_FLAG_VALUE, "Message for the event data.")
+			cmd.Flag.StringVar(&subject, "subject", DEFAULT_STRING_FLAG_VALUE, "Subject for the event data.")
+			cmd.Flag.StringVar(&attribute, "attribute", "{}", "JSON String detailing the progress of the event.")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier.")
+			cmd.Flag.Int64Var(&dataid, "dataid", -1, "Unique identifier of the event data.")
+			cmd.Flag.Int64Var(&timestamp, "timestamp", DEFAULT_INT64_FLAG_VALUE, "Timestamp in seconds ago.")
+			cmd.Flag.Int64Var(&stopTime, "stopTime", DEFAULT_INT64_FLAG_VALUE, "The time at which the EventData stopped in seconds ago.")
 			cmd.ParseArgs(args)
 
 			var eventObj = &api.Event{}
@@ -322,8 +315,8 @@ Mandatory:
 		Run: func(cmd *Command, args []string) {
 			var id, dataid int64
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
-			cmd.Flag.Int64Var(&dataid, "dataid", -1, "Specify the unique id of the event data")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier.")
+			cmd.Flag.Int64Var(&dataid, "dataid", -1, "Specify the unique id of the event data.")
 			cmd.ParseArgs(args)
 
 			// check the args

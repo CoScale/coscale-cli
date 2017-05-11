@@ -33,7 +33,7 @@ func (e EventData) GetId() int64 {
 	return e.ID
 }
 
-func (api *Api) CreateEvent(name, description, attributeDescriptions, source, typeString string) (string, error) {
+func (api *Api) CreateEvent(name, description, attributeDescriptions, typeString string) (string, error) {
 	data := map[string][]string{
 		"name":                  {name},
 		"description":           {description},

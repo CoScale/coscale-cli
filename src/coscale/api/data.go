@@ -94,6 +94,10 @@ func apiDataToString(data []*ApiData) string {
 // it is the time format as defined by the api.
 func ParseDataPoint(dataPoint string, timeInSecAgo bool) (map[string][]*ApiData, error) {
 
+	if len(dataPoint) == 0 {
+		return nil, fmt.Errorf("Bad datapoint format")
+	}
+
 	// add semicolon at the end if is neccessary, it will help for better matching.
 	if (dataPoint[len(dataPoint)-1]) != ';' {
 		dataPoint += `;`

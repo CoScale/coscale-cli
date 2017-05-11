@@ -43,12 +43,12 @@ func (e ServerGroup) GetId() int64 {
 }
 
 // CreateServer creates a new server.
-func (api *Api) CreateServer(name string, description string, serverType, source string) (string, error) {
+func (api *Api) CreateServer(name string, description string, serverType string) (string, error) {
 	data := map[string][]string{
 		"name":        {name},
 		"description": {description},
 		"type":        {serverType},
-		"source":      {source},
+		"source":      {GetSource()},
 	}
 	var result string
 	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/servers/", api.AppID), data, true, &result); err != nil {
@@ -77,13 +77,13 @@ func (api *Api) UpdateServer(server *Server) (string, error) {
 }
 
 // CreateServerGroup creates a new server group.
-func (api *Api) CreateServerGroup(name, description, Type, state, source string) (string, error) {
+func (api *Api) CreateServerGroup(name, description, Type, state string) (string, error) {
 	data := map[string][]string{
 		"name":        {name},
 		"description": {description},
 		"type":        {Type},
 		"state":       {state},
-		"source":      {source},
+		"source":      {GetSource()},
 	}
 
 	var result string

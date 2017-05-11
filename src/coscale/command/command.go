@@ -109,12 +109,12 @@ func capitalize(s string) string {
 }
 
 func (c *Command) PrintUsage() {
-	tmpl(os.Stderr, usageTemplate + usageLastLine, c)
+	tmpl(os.Stderr, usageTemplate+usageLastLine, c)
 	os.Exit(2)
 }
 
 func (c *Command) PrintFullUsage() {
-	tmpl(os.Stderr, usageTemplate + usageOutputJson + "\n" + authInfo + usageLastLine, c)
+	tmpl(os.Stderr, usageTemplate+usageOutputJson+"\n"+authInfo+usageLastLine, c)
 	os.Exit(2)
 }
 
@@ -140,10 +140,10 @@ func (c *Command) ParseArgs(args []string) {
 	//add the flags for the api configuration
 	var baseUrl, accessToken, appId string
 	var rawOutput bool
-	c.Flag.StringVar(&baseUrl, "api-url", "https://api.coscale.com", "Base url for the api")
-	c.Flag.StringVar(&appId, "app-id", "", "The application id")
-	c.Flag.StringVar(&accessToken, "access-token", "", "A valid access token for the given application")
-	c.Flag.BoolVar(&rawOutput, "rawOutput", false, "The returned json objects are returned formatted by default")
+	c.Flag.StringVar(&baseUrl, "api-url", "https://api.coscale.com", "Base url for the api.")
+	c.Flag.StringVar(&appId, "app-id", "", "The application id.")
+	c.Flag.StringVar(&accessToken, "access-token", "", "A valid access token for the given application.")
+	c.Flag.BoolVar(&rawOutput, "rawOutput", false, "The returned json objects are returned formatted by default.")
 	c.Flag.Parse(args)
 	unknownArgs := c.Flag.Args()
 	if len(unknownArgs) > 0 && unknownArgs[0] != "help" {

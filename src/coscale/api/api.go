@@ -107,12 +107,12 @@ func IsInvalidConfig(err error) bool {
 }
 
 type Api struct {
-	BaseUrl      string
-	AccessToken  string
-	AppID        string
-	rawOutput    bool
-	token        string
-	validConfig  bool
+	BaseUrl     string
+	AccessToken string
+	AppID       string
+	rawOutput   bool
+	token       string
+	validConfig bool
 }
 
 // NewApi creates a new Api connector using an email and a password.
@@ -127,9 +127,9 @@ func NewFakeApi() *Api {
 	return api
 }
 
-// GetSource gets the source name for the CoScale agent.
+// GetSource gets the source name for the CoScale cli.
 func GetSource() string {
-	return "cli"
+	return "CLI"
 }
 
 // newTimeoutDialer creates a new Dailer with the given timeouts.
@@ -172,7 +172,7 @@ func (api *Api) doHttpRequest(method string, uri string, token string, data map[
 		return nil, err
 	}
 
-	req.Header.Add("User-Agent", "CoScale Agent")
+	req.Header.Add("User-Agent", "CoScale CLI")
 
 	if method == "POST" || method == "PUT" {
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -251,7 +251,7 @@ func (api *Api) makeRawCall(method string, uri string, data map[string][]string,
 	}
 
 	// Do the actual request.
-	bytes, err := api.doHttpRequest(method, api.BaseUrl + uri, api.token, data, timeout)
+	bytes, err := api.doHttpRequest(method, api.BaseUrl+uri, api.token, data, timeout)
 	if err != nil {
 		if _, ok := err.(UnauthorizedError); ok {
 			// unauthorizedError: the token might have experied. Performing login again
@@ -260,7 +260,7 @@ func (api *Api) makeRawCall(method string, uri string, data map[string][]string,
 				api.token = ""
 				return nil, err
 			}
-			return api.doHttpRequest(method, api.BaseUrl + uri, api.token, data, timeout)
+			return api.doHttpRequest(method, api.BaseUrl+uri, api.token, data, timeout)
 		}
 		return bytes, err
 	}

@@ -128,7 +128,7 @@ var alertTypeActions = []*Command{
 	ListCmd("alerttype", "type"),
 	{
 		Name:      "new",
-		UsageLine: `alert type new (--name --handle) [--description --backupHandle --backupSeconds --escalationHandle --escalationSeconds --source]`,
+		UsageLine: `alert type new (--name --handle) [--description --backupHandle --backupSeconds --escalationHandle --escalationSeconds]`,
 		Long: `
 Create a new CoScale alert type.
 
@@ -158,8 +158,6 @@ Optional:
 		Third handle level.
 	--escalationSeconds
 		Number of second to wait until notifications are sent to the third handle level.
-	--source
-		Describes who added the alert type. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, handle, description, backupHandle, escalationHandle, source string
@@ -173,7 +171,7 @@ Optional:
 			cmd.Flag.Int64Var(&backupSeconds, "backupSeconds", -1, "Number of second to wait until notifications are sent to the second handle level.")
 			cmd.Flag.StringVar(&escalationHandle, "escalationHandle", DEFAULT_STRING_FLAG_VALUE, "The handle fields describe how an alert is delivered to the user.")
 			cmd.Flag.Int64Var(&escalationSeconds, "escalationSeconds", -1, "Number of second to wait until notifications are sent to the third handle level.")
-			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the alert type.")
+			cmd.Flag.StringVar(&source, "source", "cli", "Deprecated.")
 			cmd.ParseArgs(args)
 
 			// Check if values were provided for mandatory flags.
@@ -205,12 +203,12 @@ Optional:
 				}
 			}
 
-			cmd.PrintResult(cmd.Capi.CreateType(name, description, handle, backupHandle, escalationHandle, source, backupSeconds, escalationSeconds))
+			cmd.PrintResult(cmd.Capi.CreateType(name, description, handle, backupHandle, escalationHandle, backupSeconds, escalationSeconds))
 		},
 	},
 	{
 		Name:      "update",
-		UsageLine: `alert type update (--name | --id) [--name --handle --description --backupHandle --backupSeconds --escalationHandle --escalationSeconds --source]`,
+		UsageLine: `alert type update (--name | --id) [--name --handle --description --backupHandle --backupSeconds --escalationHandle --escalationSeconds]`,
 		Long: `
 Update an existing CoScale alert type.
 
@@ -242,8 +240,6 @@ Optional:
 		Third handle level.
 	--escalationSeconds
 		Number of second to wait until notifications are sent to the third handle level.
-	--source
-		Describes who added the alert type. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, handle, description, backupHandle, escalationHandle, source string
@@ -258,7 +254,7 @@ Optional:
 			cmd.Flag.Int64Var(&backupSeconds, "backupSeconds", -1, "Number of second to wait until notifications are sent to the second handle level.")
 			cmd.Flag.StringVar(&escalationHandle, "escalationHandle", DEFAULT_STRING_FLAG_VALUE, "The handle fields describe how an alert is delivered to the user.")
 			cmd.Flag.Int64Var(&escalationSeconds, "escalationSeconds", -1, "Number of second to wait until notifications are sent to the third handle level.")
-			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the alert type.")
+			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Deprecated.")
 			cmd.ParseArgs(args)
 
 			var err error
@@ -311,9 +307,6 @@ Optional:
 			if escalationSeconds != -1 {
 				alertTypeObj.EscalationSeconds = escalationSeconds
 			}
-			if source != DEFAULT_STRING_FLAG_VALUE {
-				alertTypeObj.Source = source
-			}
 
 			cmd.PrintResult(cmd.Capi.UpdateType(alertTypeObj))
 		},
@@ -352,7 +345,7 @@ Mandatory:
 			var id int64
 			var name string
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier of alert type")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier of alert type.")
 			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name of the alert type.")
 
 			cmd.ParseArgs(args)
@@ -376,7 +369,7 @@ Mandatory:
 	},
 	{
 		Name:      "new",
-		UsageLine: `alert trigger new (--name --config --metric|--metricid) [--autoresolve --typename|--typeid --description --server|--serverid --servergroup|--servergroupid --source]`,
+		UsageLine: `alert trigger new (--name --config --metric|--metricid) [--autoresolve --typename|--typeid --description --server|--serverid --servergroup|--servergroupid]`,
 		Long: `
 Create a new CoScale alert trigger.
 
@@ -417,8 +410,6 @@ Optional:
 	--servergroupid 
 		The servergroup id for which the alert will be triggered.
 	Note: if no server or servergroup is provided the trigger will be set for the entire application.
-	--source
-		Describes who added the alert trigger. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, config, metric, description, server, serverGroup, source, typeName string
@@ -436,7 +427,7 @@ Optional:
 			cmd.Flag.Int64Var(&serverID, "serverid", -1, "The server id for which the alert will be triggered.")
 			cmd.Flag.StringVar(&serverGroup, "servergroup", DEFAULT_STRING_FLAG_VALUE, "The servergroup name for which the alert will be triggered.")
 			cmd.Flag.Int64Var(&serverGroupID, "servergroupid", -1, "The server id for which the alert will be triggered.")
-			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the alert trigger.")
+			cmd.Flag.StringVar(&source, "source", "cli", "Deprecated.")
 			cmd.Flag.StringVar(&typeName, "typename", "Default alerts", "Specify the name of the alert type for triggers.")
 			cmd.Flag.Int64Var(&typeID, "typeid", -1, "Specify the alert type id for triggers.")
 
@@ -500,12 +491,12 @@ Optional:
 				typeID = alertTypeObj.ID
 			}
 
-			cmd.PrintResult(cmd.Capi.CreateTrigger(name, description, config, source, typeID, autoResolve, metricID, serverID, serverGroupID, onApp))
+			cmd.PrintResult(cmd.Capi.CreateTrigger(name, description, config, typeID, autoResolve, metricID, serverID, serverGroupID, onApp))
 		},
 	},
 	{
 		Name:      "update",
-		UsageLine: `alert trigger update (--name | --id) [--autoresolve --typename|--typeid --name --config --metric|--metricid --description --server|--serverid --servergroup|--servergroupid --source]`,
+		UsageLine: `alert trigger update (--name | --id) [--autoresolve --typename|--typeid --name --config --metric|--metricid --description --server|--serverid --servergroup|--servergroupid]`,
 		Long: `
 Update a existing CoScale alert trigger.
 
@@ -548,8 +539,6 @@ Optional:
 	--servergroupid 
 		The servergroup id for which the alert will be triggered.
 	Note: if no server or servergroup is provided the tigger will be set for entire application.
-	--source
-		Describes who added the alert trigger. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, config, metric, description, server, serverGroup, source, typeName string
@@ -568,7 +557,7 @@ Optional:
 			cmd.Flag.Int64Var(&serverID, "serverid", -1, "The server id for which the alert will be triggered.")
 			cmd.Flag.StringVar(&serverGroup, "servergroup", DEFAULT_STRING_FLAG_VALUE, "The servergroup name for which the alert will be triggered.")
 			cmd.Flag.Int64Var(&serverGroupID, "servergroupid", -1, "The server id for which the alert will be triggered.")
-			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the alert trigger.")
+			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Deprecated.")
 			cmd.Flag.StringVar(&typeName, "typename", DEFAULT_STRING_FLAG_VALUE, "Specify the name of the alert type for triggers.")
 			cmd.Flag.Int64Var(&typeID, "typeid", -1, "Specify the alert type id for triggers.")
 
@@ -670,10 +659,6 @@ Optional:
 			onApp = serverGroupID == -1 && serverID == -1
 			if alertTriggerObj.OnApp != onApp {
 				alertTriggerObj.OnApp = onApp
-			}
-
-			if source != DEFAULT_STRING_FLAG_VALUE {
-				alertTriggerObj.Source = source
 			}
 
 			cmd.PrintResult(cmd.Capi.UpdateTrigger(typeID, alertTriggerObj))

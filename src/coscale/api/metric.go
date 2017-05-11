@@ -38,7 +38,7 @@ func (e MetricGroup) GetId() int64 {
 	return e.ID
 }
 
-func (api *Api) CreateMetric(name, description, datatype, unit, subject, source string, period int) (string, error) {
+func (api *Api) CreateMetric(name, description, datatype, unit, subject string, period int) (string, error) {
 	data := map[string][]string{
 		"name":        {name},
 		"description": {description},
@@ -46,7 +46,7 @@ func (api *Api) CreateMetric(name, description, datatype, unit, subject, source 
 		"period":      {strconv.Itoa(period)},
 		"unit":        {unit},
 		"subject":     {subject},
-		"source":      {source},
+		"source":      {GetSource()},
 	}
 	var result string
 	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/metrics/", api.AppID), data, true, &result); err != nil {
@@ -77,14 +77,14 @@ func (api *Api) UpdateMetric(metric *Metric) (string, error) {
 }
 
 // CreateMetricGroup creates a new metric group.
-func (api *Api) CreateMetricGroup(name, description, Type, state, subject, source string) (string, error) {
+func (api *Api) CreateMetricGroup(name, description, Type, state, subject string) (string, error) {
 	data := map[string][]string{
 		"name":        {name},
 		"description": {description},
 		"type":        {Type},
 		"state":       {state},
 		"subject":     {subject},
-		"source":      {source},
+		"source":      {GetSource()},
 	}
 	var result string
 	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/metricgroups/", api.AppID), data, true, &result); err != nil {

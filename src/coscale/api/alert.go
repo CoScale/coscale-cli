@@ -83,13 +83,13 @@ func (api *Api) AlertSolution(alert *Alert, solutionType string) (string, error)
 }
 
 // CreateType is used to add a new Alert type.
-func (api *Api) CreateType(name, description, handle, backupHandle, escalationHandle, source string, backupSeconds, escalationSeconds int64) (string, error) {
+func (api *Api) CreateType(name, description, handle, backupHandle, escalationHandle string, backupSeconds, escalationSeconds int64) (string, error) {
 
 	data := map[string][]string{
 		"name":        {name},
 		"description": {description},
 		"handle":      {handle},
-		"source":      {source},
+		"source":      {GetSource()},
 	}
 
 	// Set the optional values if they have value.
@@ -158,7 +158,7 @@ func (api *Api) GetTriggers(alertTypeID int64) (string, error) {
 }
 
 // CreateTrigger is used to add a new Trigger for alerts.
-func (api *Api) CreateTrigger(name, description, config, source string, alertTypeID, autoResolve, metricID, serverID, serverGroupID int64, onApp bool) (string, error) {
+func (api *Api) CreateTrigger(name, description, config string, alertTypeID, autoResolve, metricID, serverID, serverGroupID int64, onApp bool) (string, error) {
 
 	data := map[string][]string{
 		"name":        {name},
@@ -166,7 +166,7 @@ func (api *Api) CreateTrigger(name, description, config, source string, alertTyp
 		"metric":      {fmt.Sprintf("%d", metricID)},
 		"config":      {config},
 		"onApp":       {fmt.Sprintf("%t", onApp)},
-		"source":      {source},
+		"source":      {GetSource()},
 	}
 
 	// Set the option values if they have value.
