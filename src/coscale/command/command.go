@@ -19,18 +19,24 @@ import (
 )
 
 const (
+	// DEFAULT_STRING_FLAG_VALUE defines the default value for a string flag.
 	DEFAULT_STRING_FLAG_VALUE string = api.DEFAULT_STRING_VALUE
-	DEFAULT_INT64_FLAG_VALUE  int64  = api.DEFAULT_INT64_VALUE
+	// DEFAULT_INT64_FLAG_VALUE defines the default value for an integer flag.
+	DEFAULT_INT64_FLAG_VALUE int64 = api.DEFAULT_INT64_VALUE
 )
 
 const (
-	// Status codes for os.Exit.
-	EXIT_SUCCESS              int = 0
-	EXIT_SUCCESS_ERROR        int = 1
+	// EXIT_SUCCESS is the exit code indicating success.
+	EXIT_SUCCESS int = 0
+	// EXIT_SUCCESS_ERROR is the exit code indicating a error occurred.
+	EXIT_SUCCESS_ERROR int = 1
+	// EXIT_AUTHENTICATION_ERROR is the exit code indicating an authentication failure to the API.
 	EXIT_AUTHENTICATION_ERROR int = 2
-	EXIT_FLAG_ERROR           int = 3
+	// EXIT_FLAG_ERROR is the exit code indicating the provided flags are invalid.
+	EXIT_FLAG_ERROR int = 3
 )
 
+// Command defines a CLI command containing all flags and subcommands for the command.
 type Command struct {
 	Name        string
 	UsageLine   string
@@ -42,6 +48,7 @@ type Command struct {
 	Run         func(cmd *Command, args []string)
 }
 
+// NewCommand creates a new Command.
 func NewCommand(name, usage string, subCommands []*Command) *Command {
 	return &Command{
 		Name:        name,
@@ -56,10 +63,12 @@ func NewCommand(name, usage string, subCommands []*Command) *Command {
 	}
 }
 
+// Runnable returns true if the command is runnable, meaning it doesn't have any subcommands.
 func (c *Command) Runnable() bool {
 	return len(c.SubCommands) == 0
 }
 
+// GetSubCommand returns the specific Command specified by the args.
 func (c *Command) GetSubCommand(args []string) *Command {
 	if len(args) == 0 {
 		c.PrintUsage()
@@ -77,6 +86,7 @@ func (c *Command) GetSubCommand(args []string) *Command {
 	return nil
 }
 
+// GetAllSubCommands returns a list of all Commands.
 func (c *Command) GetAllSubCommands() []*Command {
 	commands := make([]*Command, 0, 0)
 	if c.Runnable() {
@@ -108,11 +118,13 @@ func capitalize(s string) string {
 	return string(unicode.ToTitle(r)) + s[n:]
 }
 
+// PrintUsage prints the short usage for Command and exits the process.
 func (c *Command) PrintUsage() {
 	tmpl(os.Stderr, usageTemplate+usageLastLine, c)
 	os.Exit(2)
 }
 
+// PrintFullUsage prints the full usage for the Command and exits the process.
 func (c *Command) PrintFullUsage() {
 	tmpl(os.Stderr, usageTemplate+usageOutputJson+"\n"+authInfo+usageLastLine, c)
 	os.Exit(2)
@@ -136,6 +148,7 @@ func (c *Command) GetApi(baseUrl, accessToken, appId string, rawOutput bool) *ap
 	return api.NewApi(baseUrl, accessToken, appId, rawOutput)
 }
 
+// ParseArgs takes the API configuration from the args and stores them in the Command.
 func (c *Command) ParseArgs(args []string) {
 	//add the flags for the api configuration
 	var baseUrl, accessToken, appId string
@@ -153,6 +166,7 @@ func (c *Command) ParseArgs(args []string) {
 	c.Capi = c.GetApi(strings.Trim(baseUrl, "/"), accessToken, appId, rawOutput)
 }
 
+// PrintResult formats the result or error and exits the process with the appropriate exit code.
 func (c *Command) PrintResult(result string, err error) {
 	if err == nil {
 		fmt.Fprintln(os.Stdout, result)
@@ -296,7 +310,7 @@ func GetCommandOutput(command string, timeout time.Duration, arg ...string) ([]b
 	})
 	response := <-c
 	if err != nil {
-		fmt.Errorf("%s %s", err.Error(), stdErr.String())
+		return nil, fmt.Errorf("%s %s", err.Error(), stdErr.String())
 	}
 	return response, nil
 }

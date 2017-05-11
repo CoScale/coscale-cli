@@ -16,8 +16,10 @@ var metricSubCommands = append(MetricActions, []*Command{
  * Metric Actions
  */
 
+// MetricObject defines the metric command on the CLI.
 var MetricObject = NewCommand("metric", "metric <action> [--<field>='<data>']", metricSubCommands)
 
+// MetricActions defines the metric actions on the CLI.
 var MetricActions = []*Command{
 	ListCmd("metric"),
 	GetCmd("metric"),
@@ -190,8 +192,10 @@ Optional:
 	},
 }
 
+// MetricGroupObject defines the metric group command on the CLI.
 var MetricGroupObject = NewCommand("metricgroup", "metricgroup <action> [--<field>='<data>']", MetricGroupActions)
 
+// MetricGroupActions defines the metric group actions on the CLI.
 var MetricGroupActions = []*Command{
 	ListCmd("metricgroup"),
 	GetCmd("metricgroup"),

@@ -33,6 +33,6 @@ var CheckObject = &Command{
 		if err != nil {
 			cmd.PrintResult("", err)
 		}
-		cmd.PrintResult(`{"msg":"Configuration successfuly checked!"}`, nil)
+		cmd.PrintResult(`{"msg":"Configuration successfully checked!"}`, nil)
 	},
 }

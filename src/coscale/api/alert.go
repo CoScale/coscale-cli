@@ -20,6 +20,7 @@ type Alert struct {
 	Source            string
 }
 
+// GetId returns the id of the Alert.
 func (e Alert) GetId() int64 {
 	return e.ID
 }
@@ -38,6 +39,7 @@ type AlertType struct {
 	Version           int64
 }
 
+// GetId returns the id of the AlertType.
 func (a AlertType) GetId() int64 {
 	return a.ID
 }
@@ -57,6 +59,7 @@ type AlertTrigger struct {
 	Version     int64
 }
 
+// GetId returns the id of the AlertTrigger.
 func (a AlertTrigger) GetId() int64 {
 	return a.ID
 }

@@ -2,6 +2,7 @@ package api
 
 import "fmt"
 
+// Event describes the event object on the API
 type Event struct {
 	ID                    int64
 	Name                  string
@@ -13,11 +14,12 @@ type Event struct {
 	Version               int64
 }
 
+// GetId returns the Id of the Event.
 func (e Event) GetId() int64 {
 	return e.ID
 }
 
-// EventData describes the event data uploaded to api
+// EventData describes the event data object on the API
 type EventData struct {
 	ID         int64
 	Timestamp  int64
@@ -29,10 +31,12 @@ type EventData struct {
 	UpdateTime int64
 }
 
+// GetId returns the Id of the EventData.
 func (e EventData) GetId() int64 {
 	return e.ID
 }
 
+// CreateEvent creates an Event using the API.
 func (api *Api) CreateEvent(name, description, attributeDescriptions, typeString string) (string, error) {
 	data := map[string][]string{
 		"name":                  {name},
@@ -51,6 +55,7 @@ func (api *Api) CreateEvent(name, description, attributeDescriptions, typeString
 	return result, nil
 }
 
+// UpdateEvent updates an Event using the API.
 func (api *Api) UpdateEvent(event *Event) (string, error) {
 	data := map[string][]string{
 		"name":                  {event.Name},
@@ -67,6 +72,7 @@ func (api *Api) UpdateEvent(event *Event) (string, error) {
 	return api.GetObject("event", event.ID)
 }
 
+// DeleteEvent deletes an Event using the API.
 func (api *Api) DeleteEvent(event *Event) error {
 	if err := api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/events/%d/", api.AppID, event.ID), nil, false, nil); err != nil {
 		return err
@@ -74,7 +80,7 @@ func (api *Api) DeleteEvent(event *Event) error {
 	return nil
 }
 
-//GetEventData will return the eventdata by the event Id and eventdata Id
+// GetEventData will return the eventdata by the event Id and eventdata Id.
 func (api *Api) GetEventData(eventId, eventdataId int64, eventData *EventData) error {
 	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/events/%d/data/get/%d/", api.AppID, eventId, eventdataId), nil, false, &eventData); err != nil {
 		return err
@@ -82,6 +88,7 @@ func (api *Api) GetEventData(eventId, eventdataId int64, eventData *EventData) e
 	return nil
 }
 
+// InsertEventData inserts EventData for a given Event using the API.
 func (api *Api) InsertEventData(id int64, message, subject, attribute string, timestamp, stopTime int64) (string, error) {
 	data := map[string][]string{
 		"message":   {message},
@@ -101,6 +108,7 @@ func (api *Api) InsertEventData(id int64, message, subject, attribute string, ti
 	return result, nil
 }
 
+// UpdateEventData updates EventData using the API.
 func (api *Api) UpdateEventData(eventId, eventdataId int64, eventData *EventData) (string, error) {
 	data := map[string][]string{
 		"message":   {eventData.Message},
@@ -120,7 +128,7 @@ func (api *Api) UpdateEventData(eventId, eventdataId int64, eventData *EventData
 	return result, nil
 }
 
-// DeleteEventData is used to delete a data entry for a event
+// DeleteEventData deletes EventData using the API.
 func (api *Api) DeleteEventData(eventId, eventdataId int64) error {
 	if err := api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/events/%d/data/%d/", api.AppID, eventId, eventdataId), nil, false, nil); err != nil {
 		return err

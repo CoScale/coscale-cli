@@ -8,9 +8,9 @@ import (
 
 // ApiConfiguration contains all information to connect with the api.
 type ApiConfiguration struct {
-	BaseUrl     string  `json:"baseurl"`
-	AccessToken string  `json:"accesstoken"`
-	AppId       string  `json:"appid"`
+	BaseUrl     string `json:"baseurl"`
+	AccessToken string `json:"accesstoken"`
+	AppId       string `json:"appid"`
 }
 
 // ReadApiConfiguration reads the api configuration from a file.

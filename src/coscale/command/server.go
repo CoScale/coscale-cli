@@ -5,7 +5,10 @@ import (
 	"os"
 )
 
+// ServerObject defines the server command on the CLI.
 var ServerObject = NewCommand("server", "server <action> [--<field>='<data>']", ServerActions)
+
+// ServerActions defines the server actions on the CLI.
 var ServerActions = []*Command{
 	ListCmd("server"),
 	GetCmd("server"),
@@ -107,7 +110,10 @@ The name or id should be specified
 	},
 }
 
+// ServerGroupObject defines the server group command on the CLI.
 var ServerGroupObject = NewCommand("servergroup", "servergroup <action> [--<field>='<data>']", ServerGroupActions)
+
+// ServerGroupActions defines the server group actions on the CLI.
 var ServerGroupActions = []*Command{
 	ListCmd("servergroup"),
 	GetCmd("servergroup"),

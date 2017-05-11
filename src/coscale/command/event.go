@@ -6,8 +6,11 @@ import (
 )
 
 var eventObjectName = "event"
+
+// EventObject defines the event command on the CLI.
 var EventObject = NewCommand(eventObjectName, "event <action> [--<field>='<data>']", EventActions)
 
+// EventActions defines the event actions on the CLI.
 var EventActions = []*Command{
 	ListCmd(eventObjectName),
 	GetCmd(eventObjectName),
@@ -162,7 +165,7 @@ Mandatory:
 		specify the event name.
 	--id
 		specify the event id.
-	Only one from id/name is neccessary.
+	Only one from id/name is necessary.
 		
 	--message
 		The message for the event data.	
@@ -225,7 +228,7 @@ Mandatory:
 		specify the event name.
 	--id
 		specify the event id.
-	Only one from id/name is neccessary.
+	Only one from id/name is necessary.
 	
 	--dataid
 		specify the unique id of the event data.

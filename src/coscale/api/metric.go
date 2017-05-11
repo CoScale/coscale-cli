@@ -5,6 +5,7 @@ import (
 	"strconv"
 )
 
+// Metric describes the metric object on the API
 type Metric struct {
 	ID          int64
 	Name        string
@@ -18,10 +19,12 @@ type Metric struct {
 	Version     int64
 }
 
+// GetId returns the Id of the Metric.
 func (e Metric) GetId() int64 {
 	return e.ID
 }
 
+// MetricGroup describes the metric group object on the API
 type MetricGroup struct {
 	ID           int64
 	Name         string
@@ -34,10 +37,12 @@ type MetricGroup struct {
 	Version      int64
 }
 
+// GetId returns the Id of the MetricGroup.
 func (e MetricGroup) GetId() int64 {
 	return e.ID
 }
 
+// CreateMetric creates a new Metric using the API.
 func (api *Api) CreateMetric(name, description, datatype, unit, subject string, period int) (string, error) {
 	data := map[string][]string{
 		"name":        {name},
@@ -58,6 +63,7 @@ func (api *Api) CreateMetric(name, description, datatype, unit, subject string, 
 	return result, nil
 }
 
+// UpdateMetric updates an existing Metric using the API.
 func (api *Api) UpdateMetric(metric *Metric) (string, error) {
 	data := map[string][]string{
 		"name":        {metric.Name},
@@ -76,7 +82,7 @@ func (api *Api) UpdateMetric(metric *Metric) (string, error) {
 	return api.GetObject("metric", metric.ID)
 }
 
-// CreateMetricGroup creates a new metric group.
+// CreateMetricGroup creates a new metric group using the API.
 func (api *Api) CreateMetricGroup(name, description, Type, state, subject string) (string, error) {
 	data := map[string][]string{
 		"name":        {name},
@@ -96,7 +102,7 @@ func (api *Api) CreateMetricGroup(name, description, Type, state, subject string
 	return result, nil
 }
 
-// UpdateMetricGroup updates the name of the metricgroup.
+// UpdateMetricGroup updates the MetricGroup using the API.
 func (api *Api) UpdateMetricGroup(metricGroup *MetricGroup) (string, error) {
 	data := map[string][]string{
 		"name":        {metricGroup.Name},
@@ -114,7 +120,7 @@ func (api *Api) UpdateMetricGroup(metricGroup *MetricGroup) (string, error) {
 	return api.GetObject("metricgroup", metricGroup.ID)
 }
 
-//GetMetricsByGroup will return all the metrics from a metricgroup
+// GetMetricsByGroup will return all the metrics from a metricgroup.
 func (api *Api) GetMetricsByGroup(metricGroup *MetricGroup) (string, error) {
 	var result string
 	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/metricgroups/%d/metrics/", api.AppID, metricGroup.GetId()), nil, true, &result); err != nil {
@@ -123,7 +129,7 @@ func (api *Api) GetMetricsByGroup(metricGroup *MetricGroup) (string, error) {
 	return result, nil
 }
 
-// AddMetricDimension adds a dimension to a metric
+// AddMetricDimension adds a dimension to a metric.
 func (api *Api) AddMetricDimension(metricID, dimensionID int64) (string, error) {
 	var result string
 	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/metrics/%d/dimensions/%d/", api.AppID, metricID, dimensionID), nil, true, &result); err != nil {

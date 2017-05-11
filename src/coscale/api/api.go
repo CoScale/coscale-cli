@@ -2,12 +2,10 @@ package api
 
 import (
 	"bytes"
-	"fmt"
-	"math"
-	//"sync"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"io/ioutil"
+	"math"
 	"net"
 	"net/http"
 	"net/url"
@@ -15,13 +13,17 @@ import (
 	"time"
 )
 
+// Object represents an CoScale API Object with an Id.
 type Object interface {
+	// GetId returns the Id of the CoScale API Object.
 	GetId() int64
 }
 
 const (
+	// DEFAULT_STRING_VALUE defines the default value for a string flag.
 	DEFAULT_STRING_VALUE string = `!>dUmmy<!`
-	DEFAULT_INT64_VALUE  int64  = math.MinInt64
+	// DEFAULT_INT64_VALUE defines the default value for an integer flag.
+	DEFAULT_INT64_VALUE int64 = math.MinInt64
 )
 
 const (
@@ -30,12 +32,25 @@ const (
 	downloadTimeout   time.Duration = 300 * time.Second
 )
 
+// AuthenticationError is returned by the API when a login fails.
 type AuthenticationError string
+
+// UnauthorizedError is returned by the API when the session has insufficient acces rights.
 type UnauthorizedError string
+
+// NotFoundError is returned by the API when the requested object was not found.
 type NotFoundError string
+
+// RequestError is returned by the API for invalid requests.
 type RequestError string
+
+// Duplicate is returned by the API when a duplicate is detected during insert.
 type Duplicate int64
+
+// Disabled is returned by the API when the feature is disabled.
 type Disabled string
+
+// InvalidConfig is returned when the API connection configuration is not valid.
 type InvalidConfig string
 
 func (ue AuthenticationError) Error() string {
@@ -66,49 +81,52 @@ func (i InvalidConfig) Error() string {
 	return string(i)
 }
 
-// Checks if an error is a AuthenticationError.
+// IsAuthenticationError checks if an error is a AuthenticationError.
 func IsAuthenticationError(err error) bool {
 	_, ok := err.(AuthenticationError)
 	return ok
 }
 
-// Checks if an error is an NotFoundError.
+// IsNotFoundError checks if an error is an NotFoundError.
 func IsNotFoundError(err error) bool {
 	_, ok := err.(NotFoundError)
 	return ok
 }
 
-// Checks if an error is a RequestError.
+// IsRequestError checks if an error is a RequestError.
 func IsRequestError(err error) bool {
 	_, ok := err.(RequestError)
 	return ok
 }
 
-// Check if the error is a duplicate error, if true, this also returns the duplicate id.
+// IsDuplicate checks if the error is a duplicate error, if true, this also returns the duplicate id.
 func IsDuplicate(err error) (bool, int64) {
 	d, ok := err.(Duplicate)
 	if ok {
 		return ok, int64(d)
-	} else {
-		return ok, 0
 	}
+	return ok, 0
 }
 
-// Check if an error indicates that the feature was disabled.
+// IsDisabled checks if an error indicates that the feature was disabled.
 func IsDisabled(err error) bool {
 	_, ok := err.(Disabled)
 	return ok
 }
 
-// Check if an error is caused by an invalid api configuration.
+// IsInvalidConfig checks if an error is caused by an invalid api configuration.
 func IsInvalidConfig(err error) bool {
 	_, ok := err.(InvalidConfig)
 	return ok
 }
 
+// Api contains the Api connection configuration.
 type Api struct {
-	BaseUrl     string
+	// BaseUrl is in the following format: https://<coscale-hostname>
+	BaseUrl string
+	// AccessToken is a UUID giving access permissions on the application.
 	AccessToken string
+	// AppID is a UUID defining the application.
 	AppID       string
 	rawOutput   bool
 	token       string
@@ -121,7 +139,7 @@ func NewApi(baseUrl string, accessToken string, appID string, rawOutput bool) *A
 	return api
 }
 
-// NewApi creates a new Api connector using an email and a password.
+// NewFakeApi creates a new Api connector using an email and a password.
 func NewFakeApi() *Api {
 	api := &Api{"", "", "", true, "", false}
 	return api
@@ -206,7 +224,7 @@ func (api *Api) doHttpRequest(method string, uri string, token string, data map[
 		}
 		return nil, RequestError(fmt.Sprintf("Request error: %s", body))
 	} else if resp.StatusCode != 200 {
-		return nil, errors.New(fmt.Sprintf("Received bad status code: %d -- %s", resp.StatusCode, body))
+		return nil, fmt.Errorf("Received bad status code: %d -- %s", resp.StatusCode, body)
 	}
 
 	if err != nil {
@@ -216,7 +234,9 @@ func (api *Api) doHttpRequest(method string, uri string, token string, data map[
 	return body, nil
 }
 
+// LoginData contains the required fields for the login API function.
 type LoginData struct {
+	// Token should contain the AccessToken.
 	Token string
 }
 

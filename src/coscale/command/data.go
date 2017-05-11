@@ -6,7 +6,11 @@ import (
 )
 
 var dataObjectName = "data"
+
+// DataObject defines the data command on the CLI.
 var DataObject = NewCommand(dataObjectName, "data <action> [--<field>='<data>']", DataActions)
+
+// DataActions defines the data actions on the CLI.
 var DataActions = []*Command{
 	{
 		Name:      "get",

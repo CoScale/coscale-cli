@@ -6,8 +6,6 @@ import (
 	"os"
 )
 
-const FIRST_RUN_SUCCESS int = 67
-
 //main command of Coscale coscale-cli
 func main() {
 

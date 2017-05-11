@@ -18,10 +18,12 @@ var alertSubCommands = append(AlertActions, []*Command{
  *
  */
 
-// Alert will be a new command with subcommands.
 var alertObjectName = "alert"
+
+// AlertObject defines the alert command on the CLI.
 var AlertObject = NewCommand(alertObjectName, "alert <action> [--<field>='<data>']", alertSubCommands)
 
+// AlertActions defines the alert actions on the CLI.
 var AlertActions = []*Command{
 	{
 		Name:      "list",
