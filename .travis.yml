@@ -1,12 +1,23 @@
 language: go
+
+go:
+    - 1.7
+
 env:
-    - GIMME_OS=linux GIMME_ARCH=amd64 EXTENSION=
-    - GIMME_OS=windows GIMME_ARCH=amd64 EXTENSION=.exe
+    - "MY_GOOS=linux MY_GOARCH=amd64 EXTENSION="
+    - "MY_GOOS=windows MY_GOARCH=amd64 EXTENSION=.exe"
+
+before_install:
+    - export GOOS="${MY_GOOS}"
+    - export GOARCH="${MY_GOARCH}"
+
 install:
     - export GOPATH=`pwd`
     - mkdir -p bin
+
 script:
     - go build -o bin/coscale-cli$EXTENSION coscale
+
 deploy:
     provider: releases
     api_key:
