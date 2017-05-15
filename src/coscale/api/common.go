@@ -8,7 +8,7 @@ import (
 //some of the api calls will be common for different objects
 //all the common calls are placed in this source file
 
-//GetObjects will get all the objects (json) specified by objectName. eg: all the metrics or all the servers
+// GetObjects will get all the objects (json) specified by objectName. eg: all the metrics or all the servers
 func (api *Api) GetObjects(objectName string) (string, error) {
 	var result string
 	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/%ss/", api.AppID, objectName), nil, true, &result); err != nil {
@@ -35,7 +35,7 @@ func (api *Api) GetObjectFromGroup(objectGroup, objectName string, groupID, obje
 	return result, nil
 }
 
-//GetObjectRef will put in result a reference to a object specified by objectName and that have a certain id
+// GetObjectRef will put in result a reference to a object specified by objectName and that have a certain id
 func (api *Api) GetObjectRef(objectName string, id int64, result Object) error {
 	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/%ss/%d/", api.AppID, objectName, id), nil, false, &result); err != nil {
 		return err
@@ -51,7 +51,7 @@ func (api *Api) GetObjectRefFromGroup(objectGroup, objectName string, groupID, o
 	return nil
 }
 
-//GetObjectByName will return the object (json) specified by objectName and name
+// GetObjectByName will return the object (json) specified by objectName and name
 func (api *Api) GetObjectByName(objectName string, name string) (string, error) {
 	// In go %% is % escaped, we need to escape the name to work with string fmt.
 	name = strings.Replace(name, "%", "%%", -1)
@@ -63,7 +63,7 @@ func (api *Api) GetObjectByName(objectName string, name string) (string, error) 
 	return result, nil
 }
 
-//GetObejctRefByName will put in result a reference to the oject specified by objectName and name
+// GetObejctRefByName will put in result a reference to the oject specified by objectName and name
 func (api *Api) GetObejctRefByName(objectName string, name string, result Object) error {
 	// In go %% is % escaped, we need to escape the name to work with string fmt.
 	name = strings.Replace(name, "%", "%%", -1)
@@ -95,7 +95,7 @@ func (api *Api) GetObejctRefByNameFromGroup(objectGroup, objectName string, grou
 	return nil
 }
 
-//DeleteObject will delete a object
+// DeleteObject will delete a object
 func (api *Api) DeleteObject(objectName string, object *Object) error {
 	if err := api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/%ss/%d/", api.AppID, objectName, (*object).GetId()), nil, false, nil); err != nil {
 		return err
@@ -120,7 +120,7 @@ func (api *Api) DeleteObjectFromGroup(objectName string, object Object, group Ob
 	return api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/%sgroups/%d/%ss/%d/", api.AppID, objectName, group.GetId(), objectName, object.GetId()), nil, false, nil)
 }
 
-// DeleteObjectFromGroup remove a object (metric, event, etc) from a group of objects.
+// DeleteObjectFromGroupByID remove a object (metric, event, etc) from a group of objects.
 func (api *Api) DeleteObjectFromGroupByID(groupName, objectName string, groupID, id int64) error {
 	return api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/%ss/%d/%ss/%d/", api.AppID, groupName, groupID, objectName, id), nil, false, nil)
 }

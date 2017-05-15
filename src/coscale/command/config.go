@@ -2,17 +2,19 @@ package command
 
 import (
 	"coscale/api"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
-	"flag"
 )
 
 // configObjectName is the name of the config subcommand
 var configObjectName = "config"
 
+// ConfigObject defines the config command on the CLI.
 var ConfigObject = NewCommand(configObjectName, "config <action> [--<field>='<data>']", ConfigActions)
 
+// ConfigActions defines the config actions on the CLI.
 var ConfigActions = []*Command{
 	{
 		Name:      "check",
@@ -24,13 +26,13 @@ Check the CLI configuration.
 			// check for getting the config file path
 			file, err := GetConfigPath()
 			if err != nil {
-				fmt.Fprintln(os.Stderr, "No such file: " + file)
+				fmt.Fprintln(os.Stderr, "No such file: "+file)
 				os.Exit(EXIT_SUCCESS_ERROR)
 			}
 			// check if the configuration file can be parsed
 			config, err := api.ReadApiConfiguration(file)
 			if err != nil {
-				fmt.Fprintln(os.Stderr, "Could not parse configuration from " + file)
+				fmt.Fprintln(os.Stderr, "Could not parse configuration from "+file)
 				os.Exit(EXIT_SUCCESS_ERROR)
 			}
 			// check if we can loggin with this configuration
@@ -40,7 +42,7 @@ Check the CLI configuration.
 				fmt.Fprintln(os.Stderr, "Api authentication failed")
 				os.Exit(EXIT_SUCCESS_ERROR)
 			}
-			fmt.Fprintln(os.Stderr, "Configuration successfuly checked")
+			fmt.Fprintln(os.Stderr, "Configuration successfully checked")
 			os.Exit(EXIT_SUCCESS)
 		},
 	},
@@ -68,7 +70,7 @@ Mandatory:
 			}
 			// create the config json
 			var baseUrl, accessToken, appId string
-			
+
 			var flags flag.FlagSet
 			flags.StringVar(&baseUrl, "api-url", "https://api.coscale.com", "Base url for the api")
 			flags.StringVar(&appId, "app-id", "", "The application id")
@@ -88,7 +90,7 @@ Mandatory:
 				os.Exit(EXIT_SUCCESS_ERROR)
 			}
 			// write the json to the file
-			fmt.Fprintln(os.Stderr, "Successfuly wrote CLI configuration file.")
+			fmt.Fprintln(os.Stderr, "Successfully wrote CLI configuration file.")
 			os.Exit(EXIT_SUCCESS)
 		},
 	},

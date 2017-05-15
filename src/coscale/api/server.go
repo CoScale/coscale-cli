@@ -5,6 +5,7 @@ import (
 	"strconv"
 )
 
+// Server describes the server object on the API.
 type Server struct {
 	ID          int64
 	Name        string
@@ -17,10 +18,12 @@ type Server struct {
 	Children    map[string]*Server
 }
 
+// GetId returns the Id of the Server.
 func (e Server) GetId() int64 {
 	return e.ID
 }
 
+// ServerAttribute describes the server attribute object on the API.
 type ServerAttribute struct {
 	ID     int64
 	Key    string
@@ -28,6 +31,7 @@ type ServerAttribute struct {
 	Source string
 }
 
+// ServerGroup describes the server group object on the API.
 type ServerGroup struct {
 	ID          int64
 	Name        string
@@ -38,17 +42,18 @@ type ServerGroup struct {
 	Version     int64
 }
 
+// GetId returns the Id of the ServerGroup.
 func (e ServerGroup) GetId() int64 {
 	return e.ID
 }
 
-// CreateServer creates a new server.
-func (api *Api) CreateServer(name string, description string, serverType, source string) (string, error) {
+// CreateServer creates a new Server using the API.
+func (api *Api) CreateServer(name string, description string, serverType string) (string, error) {
 	data := map[string][]string{
 		"name":        {name},
 		"description": {description},
 		"type":        {serverType},
-		"source":      {source},
+		"source":      {GetSource()},
 	}
 	var result string
 	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/servers/", api.AppID), data, true, &result); err != nil {
@@ -60,6 +65,7 @@ func (api *Api) CreateServer(name string, description string, serverType, source
 	return result, nil
 }
 
+// UpdateServer updates all fields on an existing Server using the API.
 func (api *Api) UpdateServer(server *Server) (string, error) {
 	data := map[string][]string{
 		"name":        {server.Name},
@@ -76,14 +82,14 @@ func (api *Api) UpdateServer(server *Server) (string, error) {
 	return api.GetObject("server", server.ID)
 }
 
-// CreateServerGroup creates a new server group.
-func (api *Api) CreateServerGroup(name, description, Type, state, source string) (string, error) {
+// CreateServerGroup creates a new ServerGroup using the API.
+func (api *Api) CreateServerGroup(name, description, Type, state string) (string, error) {
 	data := map[string][]string{
 		"name":        {name},
 		"description": {description},
 		"type":        {Type},
 		"state":       {state},
-		"source":      {source},
+		"source":      {GetSource()},
 	}
 
 	var result string
@@ -96,7 +102,7 @@ func (api *Api) CreateServerGroup(name, description, Type, state, source string)
 	return result, nil
 }
 
-// UpdateServerGroup updates the name of the servergroup.
+// UpdateServerGroup updates all fields of an existing ServerGroup using the API.
 func (api *Api) UpdateServerGroup(serverGroup *ServerGroup) (string, error) {
 	data := map[string][]string{
 		"name":        {serverGroup.Name},

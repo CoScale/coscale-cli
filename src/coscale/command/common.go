@@ -56,8 +56,8 @@ Only one of them is necessary to be specified
 			var name string
 			var id int64
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the object")
-			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the object.")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier.")
 			cmd.ParseArgs(args)
 
 			if id != -1 {
@@ -92,8 +92,8 @@ Only one of them is necessary to be specified
 			var name string
 			var id int64
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
-			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the object")
-			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the object.")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier.")
 			cmd.ParseArgs(args)
 
 			var err error

@@ -5,14 +5,17 @@ import (
 	"os"
 )
 
+// ServerObject defines the server command on the CLI.
 var ServerObject = NewCommand("server", "server <action> [--<field>='<data>']", ServerActions)
+
+// ServerActions defines the server actions on the CLI.
 var ServerActions = []*Command{
 	ListCmd("server"),
 	GetCmd("server"),
 	DeleteCmd(&api.Server{}, "server"),
 	{
 		Name:      "new",
-		UsageLine: "server new (--name) [--description --serverType --source]",
+		UsageLine: "server new (--name) [--description --serverType]",
 		Long: `
 Create a new CoScale server object.
 
@@ -26,8 +29,6 @@ Optional:
 		Description for the server.
 	--serverType
 		Describes the type of server.
-	--source
-		Describes who added the server. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, description, serverType, source string
@@ -35,19 +36,19 @@ Optional:
 			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the server.")
 			cmd.Flag.StringVar(&description, "description", "", "Description for the server.")
 			cmd.Flag.StringVar(&serverType, "serverType", "", "Describes the type of server.")
-			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the server.")
+			cmd.Flag.StringVar(&source, "source", "cli", "Deprecated.")
 			cmd.ParseArgs(args)
 
 			if name == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
-			cmd.PrintResult(cmd.Capi.CreateServer(name, description, serverType, source))
+			cmd.PrintResult(cmd.Capi.CreateServer(name, description, serverType))
 		},
 	},
 	{
 		Name:      "update",
-		UsageLine: "server update (--name | --id) [--description --serverType --state --source]",
+		UsageLine: "server update (--name | --id) [--description --serverType --state]",
 		Long: `
 Update a CoScale server object.
 
@@ -61,8 +62,6 @@ The name or id should be specified
 		Description for the server.
 	--serverType
 		Describes the type of server.
-	--source
-		Describes who added the server. Can be chosen by the user. [default: "cli"]
 	--state
 	 	"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.
 `,
@@ -73,9 +72,9 @@ The name or id should be specified
 			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the server.")
 			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "Description for the server.")
 			cmd.Flag.StringVar(&Type, "type", DEFAULT_STRING_FLAG_VALUE, "Describes the type of server.")
-			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the server.")
+			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Deprecated.")
 			cmd.Flag.StringVar(&state, "state", DEFAULT_STRING_FLAG_VALUE, `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
-			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier.")
 			cmd.ParseArgs(args)
 
 			var serverObj = &api.Server{}
@@ -102,9 +101,6 @@ The name or id should be specified
 			if Type != DEFAULT_STRING_FLAG_VALUE {
 				serverObj.Type = Type
 			}
-			if source != DEFAULT_STRING_FLAG_VALUE {
-				serverObj.Source = source
-			}
 			if state != DEFAULT_STRING_FLAG_VALUE {
 				serverObj.State = state
 			}
@@ -114,14 +110,17 @@ The name or id should be specified
 	},
 }
 
+// ServerGroupObject defines the server group command on the CLI.
 var ServerGroupObject = NewCommand("servergroup", "servergroup <action> [--<field>='<data>']", ServerGroupActions)
+
+// ServerGroupActions defines the server group actions on the CLI.
 var ServerGroupActions = []*Command{
 	ListCmd("servergroup"),
 	GetCmd("servergroup"),
 	DeleteCmd(&api.ServerGroup{}, "servergroup"),
 	{
 		Name:      "new",
-		UsageLine: `servergroup new (--name) [--description --type --state --source]`,
+		UsageLine: `servergroup new (--name) [--description --type --state]`,
 		Long: `
 Create a new CoScale servergroup object.
 
@@ -137,8 +136,6 @@ Optional:
 		Describes the type of server group.
 	--state
 		"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.	
-	--source
-		Describes who added the server group. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, description, Type, state, source string
@@ -147,19 +144,19 @@ Optional:
 			cmd.Flag.StringVar(&description, "description", "", "Description for the server group.")
 			cmd.Flag.StringVar(&Type, "type", "", "Describes the type of server group.")
 			cmd.Flag.StringVar(&state, "state", "", `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
-			cmd.Flag.StringVar(&source, "source", "cli", "Describes who added the server group.")
+			cmd.Flag.StringVar(&source, "source", "cli", "Deprecated.")
 			cmd.ParseArgs(args)
 
 			if name == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
-			cmd.PrintResult(cmd.Capi.CreateServerGroup(name, description, Type, state, source))
+			cmd.PrintResult(cmd.Capi.CreateServerGroup(name, description, Type, state))
 		},
 	},
 	{
 		Name:      "update",
-		UsageLine: `servergroup update (--name | --id) [--description --type --state --source]`,
+		UsageLine: `servergroup update (--name | --id) [--description --type --state]`,
 		Long: `
 Update a CoScale servergroup object.
 
@@ -175,8 +172,6 @@ The name or id should be specified
 		Describes the type of server group.
 	--state
 		"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.	
-	--source
-		Describes who added the server group. Can be chosen by the user. [default: "cli"]
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, description, Type, source, state string
@@ -187,7 +182,7 @@ The name or id should be specified
 			cmd.Flag.StringVar(&description, "description", DEFAULT_STRING_FLAG_VALUE, "Description for the server group.")
 			cmd.Flag.StringVar(&Type, "type", DEFAULT_STRING_FLAG_VALUE, "Describes the type of server group.")
 			cmd.Flag.StringVar(&state, "state", DEFAULT_STRING_FLAG_VALUE, `"ENABLED": capturing data, "INACTIVE": not capturing data, "DISABLED": not capturing data and not shown on the dashboard.`)
-			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Describes who added the server. Can be chosen by the user.")
+			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Deprecated.")
 			cmd.ParseArgs(args)
 
 			var serverGroupObj = &api.ServerGroup{}
@@ -213,9 +208,6 @@ The name or id should be specified
 			}
 			if Type != DEFAULT_STRING_FLAG_VALUE {
 				serverGroupObj.Type = Type
-			}
-			if source != DEFAULT_STRING_FLAG_VALUE {
-				serverGroupObj.Source = source
 			}
 			if state != DEFAULT_STRING_FLAG_VALUE {
 				serverGroupObj.State = state

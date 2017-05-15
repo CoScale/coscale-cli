@@ -6,7 +6,11 @@ import (
 )
 
 var dataObjectName = "data"
+
+// DataObject defines the data command on the CLI.
 var DataObject = NewCommand(dataObjectName, "data <action> [--<field>='<data>']", DataActions)
+
+// DataActions defines the data actions on the CLI.
 var DataActions = []*Command{
 	{
 		Name:      "get",
@@ -54,7 +58,7 @@ Optional:
 			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier for metric.")
 			cmd.Flag.IntVar(&start, "start", 0, "The start timestamp in seconds ago.")
 			cmd.Flag.IntVar(&stop, "stop", 0, "The stop timestamp in seconds ago.")
-			cmd.Flag.StringVar(&subjectIds, "subjectIds", DEFAULT_STRING_FLAG_VALUE, "The subject string")
+			cmd.Flag.StringVar(&subjectIds, "subjectIds", DEFAULT_STRING_FLAG_VALUE, "The subject string.")
 			cmd.Flag.StringVar(&aggregator, "aggregator", "AVG", "The data aggregator (AVG, MIN, MAX).")
 			cmd.Flag.StringVar(&dimensionsSpecs, "dimensionsSpecs", "[]", "JSON containing ids of the dimensions.")
 			cmd.Flag.BoolVar(&aggregateSubjects, "aggregateSubjects", false, "Boolean that indicates if the aggregated value over all subjectIds should be returned.")
