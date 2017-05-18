@@ -26,7 +26,7 @@ function coscale-cli {
 }
 ```
 
-Don't forget to fill in your *application id* and *access token* as provided on the Access Token page in the CoScale UI.
+Don't forget to fill in your *application id* and *access token* as provided on the Access Token page in the CoScale UI. Restart you bash terminal, you can now use **coscale-cli** without having to provide the applicaiton id and access token every time.
 
 ## Usage
 
@@ -56,47 +56,229 @@ alert
 
 ### Event Examples
 
-1) Create a basic CoScale event category called “Releases”
+#### Create a new event category
+
+Create an event category called "Releases"
 
 ```
 coscale-cli event new --name "Releases"
 ```
 
-2) Add a CoScale event about to the “Releases” event category
+This returns an event category object
+
+```
+{
+ "id": 53,
+ "version": 1,
+ "state": "ENABLED",
+ "name": "Releases",
+ "description": "",
+ "attributeDescriptions": "[]",
+ "type": "",
+ "source": "cli",
+ "icon": null
+}
+```
+
+#### Add a new event
+
+Add a CoScale event to the "Releases" event category
 
 ```
 coscale-cli event newdata --name "Releases" --message "V2.3.4" --subject "a"
 ```
 
+This returns the event object
+
+```
+{
+ "gid": "AVwbfl-1EjRUeON0eWk5",
+ "id": 16215,
+ "applicationId": 21,
+ "timestamp": 1495109885,
+ "stopTime": null,
+ "updateTime": 1495109885,
+ "message": "V2.3.4",
+ "subject": "a",
+ "attribute": "{}",
+ "version": 1,
+ "eventId": 53
+}
+```
+
 
 ### Server Examples
 
-1. Add a server that will not run a CoScale agent, but can be used to attach events to.
+#### Add a new server
+
+Add a server to CoScale that that will not run a CoScale agent, but can be used to push custom events and metrics to.
 
 ```
 coscale-cli server new --name "cron server" --description "Server that that runs cron jobs"
 ```
 
-2. Delete the cron server.
+This returns the server object
+
+```
+{
+ "id": 341,
+ "version": 1,
+ "state": "ENABLED",
+ "name": "cron server",
+ "description": "Server that that runs cron jobs",
+ "type": "",
+ "source": "cli",
+ "startTime": null,
+ "stopTime": null
+}
+```
+
+#### Delete a server
+
+Delete the cron server.
 
 ```
 coscale-cli server delete --name "cron server"
 ```
 
+This does not return any output when successful, the exit code should be 0.
+
 
 ### Alert Examples
 
-1. View all unresolved alerts.
+#### View all unresolved alerts.
 
 ```
 coscale-cli alert list --filter unresolved
 ```
 
-2. Resolve an alert from the list. The id is the id of an alert we got from the list command.
-
+This returns a list of unresolved alerts.
 
 ```
-coscale-cli alert resolve --id 347482
+[
+ {
+  "id": 24,
+  "version": 1,
+  "created": 1495015602,
+  "lastOccurence": 1495110060,
+  "occurrences": 195,
+  "sent": 1495015637,
+  "backup": null,
+  "escalation": null,
+  "acknowledged": null,
+  "acknowledgedBy": null,
+  "resolved": null,
+  "resolvedBy": null,
+  "onApp": false,
+  "config": "agentTimeout() > 300",
+  "acknowledgeMailSent": null,
+  "autoresolveMailSent": null,
+  "anomalyMessage": null,
+  "dimensionSpec": "[]",
+  "thirdparty": null,
+  "metricId": null,
+  "serverId": 271,
+  "groupId": null,
+  "aggregatedIntoId": null
+ }
+]
+```
+
+#### Resolve an alert from the list.
+
+Use the alert id to resolve the unresolved alert. In this example we will use the alert id from the previous *alert list* output.
+
+```
+coscale-cli alert resolve --id 24
+```
+
+
+### Metric Examples
+
+#### Push custom data for an application metric.
+
+Create an application metric
+
+```
+coscale-cli metric new --name "Transaction value" --dataType "DOUBLE" --subject "APPLICATION" --unit "$"
+```
+
+This returns the metric object (we will need the id for inserting data)
+
+```
+{
+ "id": 675,
+ "version": 1,
+ "state": "ENABLED",
+ "name": "Transaction value",
+ "description": "",
+ "unit": "$",
+ "period": 60,
+ "source": "cli",
+ "dataType": "DOUBLE",
+ "subject": "APPLICATION"
+}
+```
+
+Push data for the application metric. In this example we will push data for the 'Transaction value' metric (id 675) at timestamp 1495108650 with value 1.23:
+
+```
+coscale-cli data insert --data="M675:A:1495108650:1.23"
+```
+
+#### Push custom data for a server metric.
+
+Get the id of the server
+
+```
+coscale-cli server get --name 'myserver'
+```
+
+This returns the matching server objects
+
+```
+[
+ {
+  "id": 34,
+  "version": 3,
+  "state": "ENABLED",
+  "name": "myserver",
+  "description": "Created by agent for 'myserver'",
+  "type": "",
+  "source": "CoScale Agent",
+  "startTime": 1485958383,
+  "stopTime": null
+ }
+]
+```
+
+Create a server metric
+
+```
+coscale-cli metric new --name "Core temperature" --dataType "DOUBLE" --subject "SERVER" --unit "C"
+```
+
+This returns the metric object
+
+```
+{
+ "id": 676,
+ "version": 1,
+ "state": "ENABLED",
+ "name": "Core temperature",
+ "description": "",
+ "unit": "C",
+ "period": 60,
+ "source": "cli",
+ "dataType": "DOUBLE",
+ "subject": "SERVER"
+}
+```
+
+Push data for the server metric. In this example we will push data for the 'Core temperature' metric (id 676) for the 'myserver' server (id 34) at timestamp 1495108650 with value 50.4:
+
+```
+coscale-cli data insert --data="M676:S34:1495108650:50.4"
 ```
 
 
