@@ -21,11 +21,12 @@ In bash you can create a shortcut by putting the following function in ~/.bashrc
 
 ```bash
 function coscale-cli {
-	docker run coscale/cli $* --app-id=[application_id] --access-token=[accesstoken]
+    export ARGS=''; for ARG in "$@"; do if [[ "$ARG" != "${ARG%[[:space:]]*}" ]]; then ARG=\'$ARG\'; fi; ARGS="$ARGS $ARG"; done
+    bash -c "docker run coscale/cli ${ARGS} --app-id=[application_id] --access-token=[access_token]"
 }
 ```
 
-Don't forget to fill in your application id and access token as provided on the Access Token page in the CoScale UI.
+Don't forget to fill in your *application id* and *access token* as provided on the Access Token page in the CoScale UI.
 
 ## Usage
 
