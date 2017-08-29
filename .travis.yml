@@ -1,28 +1,22 @@
 language: go
-
 go:
-    - 1.7
-
+- 1.7
 env:
-    - "MY_GOOS=linux MY_GOARCH=amd64 EXTENSION="
-    - "MY_GOOS=windows MY_GOARCH=amd64 EXTENSION=.exe"
-
+- MY_GOOS=linux MY_GOARCH=amd64 EXTENSION=
+- MY_GOOS=windows MY_GOARCH=amd64 EXTENSION=.exe
 before_install:
-    - export GOOS="${MY_GOOS}"
-    - export GOARCH="${MY_GOARCH}"
-
+- export GOOS="${MY_GOOS}"
+- export GOARCH="${MY_GOARCH}"
 install:
-    - export GOPATH=`pwd`
-    - mkdir -p bin
-
+- export GOPATH=`pwd`
+- mkdir -p bin
 script:
-    - go build -o bin/coscale-cli$EXTENSION coscale
-
+- go build -o bin/coscale-cli$EXTENSION coscale
 deploy:
-    provider: releases
-    api_key:
-        secure: heF7EiZ6fwr456zR4fwFvbsAqWjAvsIz5RD6P8UnpB2UhZ05f9eC4Qc3crfedZiQKgInkF9EClf8+k5chIhz8/xvO772PN7uPFBJNR39/mbxCrJXXM5Hr2Jgbuhnt4+kw/OhBmpTyPn8SZ5XtHDAd1PM419sHZjAxm7OJ85xu8XswjCMSjZ/U3si0Syo6EY3BlMbjjN4X0iNBqtuX8lEqWQ0jXz0j3r5KMhtbKXKXKqNVJv+lgMqJ/79+NSfvuUcYppgozYcSHhrCzjhLXz7JCCCFyJMW0QQUeHZZCsowifSEeR7vwkihhuy6OPd5pEHWoFuXA8KWQliHQx5864v+6U8XkM8szyCicL0xQ/pekr8iy7TU92kthM/Qli72Miw8g9LBJKgV2C7TP1wMHJ9X57uMW385P7BJjVxyEFbFNwyyPUc/9nkqr1nGfeqwD3xPqP9qhw5/Lf5mTzndZ0/ykhUy6EddhPeS0gfeebPkWETmWPqslFbDZBjMAN/BAzbSQxJBwdoZipkk/hY58HIhkytPeqD/TNPQXUni/3BYM6gYjAGAo2LnX+b3pJFmAJcswCaFP9NUavlyogq/7tK6lgKX3f1ILyN7jsD95FbZPHwWg+msNF7RpHx0z2Xs3DAQ46F1LWT28RSm0X+Ihp2rAKhdKixGAS3B+7xYRMsrGQ=
-    file: bin/coscale-cli$EXTENSION
-    skip_cleanup: true
-    on:
-        tags: true
+  provider: releases
+  api_key:
+    secure: EA5LZR5pKjPbZFKaZVwhmwjFm66jF4iva06S1GxoW+6XnSrMCL2Gn0lrgOEBIfDdTlkgywNHS37wRBVapNJ1y6zzWJ+JK2fXavxXtXQoj8kRAguAmVN/vwo87hubF6r7WdlqJCKWSNbvl9/d27TgPh/dWcebZHPyjxLp/cX2jRa2i2wQFRCLc+0h1IRpY4cOQq9QskpXn+yZbau6T5ongiMF3UHYcJFOz4UxOPupanKCY94MWr6Tfbnimv5j8U6nnZflmK2GCeToQ52K9rx8UWBUIi0MR/lBJjQNPEX3p0NTMO/2t1oVTrnY4wwRvXHd4gCYtZM8E/nbWxhS1s3aVgL2VkQv7EsXe838MK0ipcMLbhCEbfCcXLzfJyjt/a1pW/Ut33wg91ln54Jv7PHHYcFZFSoeObBg9fLs4iOh5CzIKa2cXypm2fK1fOt6N7ivyJYhfimiYikOmUwUqh+GY1QtCkX09Bu5ApmbP2cP4Sg6O6dy+jWW8P2USB3mtIA1tWmcwNNfoW0C4cQLqLhPOGfU6GvoGRS1sjkBUM/2t8NEv5XupB8kp8rI5i5cKHyFsI9VuM0KAxvVetKcsQFMFdpNnE5yf2WvNNoBOdfNQDnviqjwACFa+9sO4wT6uZCpbZWIH1ToSfnaevLv49sEozZus/+4M9gFtgeVGrlauj4=
+  file: bin/coscale-cli$EXTENSION
+  skip_cleanup: true
+  on:
+    repo: tags
