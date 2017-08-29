@@ -318,3 +318,14 @@ func (api *Api) makeCall(method string, uri string, data map[string][]string, js
 	}
 	return nil
 }
+
+// GetObjectGroupName will add group sufix to a object name.
+func GetObjectGroupName(objectName string) (objectGroupName string) {
+	objectGroupName = objectName
+
+	// Make it compatible for both adding object to group and also group to group.
+	if !strings.HasSuffix(objectGroupName, "group") {
+		objectGroupName += "group"
+	}
+	return
+}

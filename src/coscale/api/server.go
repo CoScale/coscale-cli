@@ -39,6 +39,7 @@ type ServerGroup struct {
 	Type        string
 	Source      string
 	State       string
+	ParentID    int64
 	Version     int64
 }
 
@@ -83,13 +84,18 @@ func (api *Api) UpdateServer(server *Server) (string, error) {
 }
 
 // CreateServerGroup creates a new ServerGroup using the API.
-func (api *Api) CreateServerGroup(name, description, Type, state string) (string, error) {
+func (api *Api) CreateServerGroup(name, description, Type, state string, parentID int64) (string, error) {
 	data := map[string][]string{
 		"name":        {name},
 		"description": {description},
 		"type":        {Type},
 		"state":       {state},
 		"source":      {GetSource()},
+	}
+
+	// Set the parentId value if its provided.
+	if parentID != -1 {
+		data["parentId"] = []string{fmt.Sprintf("%d", parentID)}
 	}
 
 	var result string
@@ -110,6 +116,7 @@ func (api *Api) UpdateServerGroup(serverGroup *ServerGroup) (string, error) {
 		"type":        {serverGroup.Type},
 		"state":       {serverGroup.State},
 		"source":      {serverGroup.Source},
+		"parentId":    {fmt.Sprintf("%d", serverGroup.ParentID)},
 		"version":     {strconv.FormatInt(serverGroup.Version, 10)},
 	}
 	var result string

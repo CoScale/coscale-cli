@@ -35,7 +35,7 @@ The flags for list alert action are:
 
 Optional:
 	--filter
-		List actions filtered by unresolved or by unacknowledged.		
+		List actions filtered by unresolved or by unacknowledged.
 `,
 		Run: func(cmd *Command, args []string) {
 			var filter string
@@ -137,23 +137,23 @@ Create a new CoScale alert type.
 The flags for new type action are:
 
 Mandatory:
-	--name 
+	--name
 		Name for the new alert type.
 	--handle
-		The handle fields describe how an alert is delivered to the user. 
+		The handle fields describe how an alert is delivered to the user.
 		Is a list of objects, each object describes a delivery mechanism.
 		At the moment we support sending an email to a user, sending an email to an email address or integrations
 		for third party services:
 		e.g.
-		--handle "EMAIL:support@coscale.com" 
+		--handle "EMAIL:support@coscale.com"
 		also multiple contacts can be provided
-		--handle "EMAILUSER:1 EMAIL:support@coscale.com SLACK:https://hooks.slack.com..." 
+		--handle "EMAILUSER:1 EMAIL:support@coscale.com SLACK:https://hooks.slack.com..."
 Optional:
 	--description
 		Description for the alert type.
 	--backupHandle
-		AlertType can have 3 levels of handlers set. First an alert is sent. If there is no response within backupSeconds, 
-		a backup-alert is sent. If there is no response within escalationSeconds, an escalation is sent. 
+		AlertType can have 3 levels of handlers set. First an alert is sent. If there is no response within backupSeconds,
+		a backup-alert is sent. If there is no response within escalationSeconds, an escalation is sent.
 	--backupSeconds
 		Number of second to wait until notifications are sent to the second handle level.
 	--escalationHandle
@@ -217,25 +217,25 @@ Update an existing CoScale alert type.
 The flags for update type action are:
 
 Mandatory:
-	--name 
+	--name
 		Name for the alert type.
 Optional:
 	--id
 		Unique identifier, if we want to update the name of the alert type, this become mandatory.
 	--handle
-		The handle fields describe how an alert is delivered to the user. 
+		The handle fields describe how an alert is delivered to the user.
 		Is a list of objects, each object describes a delivery mechanism.
 		At the moment we support sending an email to a user, sending an email to an email address or integrations
 		for third party services:
 		e.g.
-		--handle "EMAIL:support@coscale.com" 
+		--handle "EMAIL:support@coscale.com"
 		also multiple contacts can be provided
-		--handle "EMAILUSER:1 EMAIL:support@coscale.com SLACK:https://hooks.slack.com..." 
+		--handle "EMAILUSER:1 EMAIL:support@coscale.com SLACK:https://hooks.slack.com..."
 	--description
 		Description for the alert type.
 	--backupHandle
-		AlertType can have 3 levels of handlers set. First an alert is sent. If there is no response within backupSeconds, 
-		a backup-alert is sent. If there is no response within escalationSeconds, an escalation is sent. 
+		AlertType can have 3 levels of handlers set. First an alert is sent. If there is no response within backupSeconds,
+		a backup-alert is sent. If there is no response within escalationSeconds, an escalation is sent.
 	--backupSeconds
 		Number of second to wait until notifications are sent to the second handle level.
 	--escalationHandle
@@ -337,11 +337,11 @@ Get all alert triggers for an alert type from CoScale Api.
 The flags for list trigger action are:
 
 Mandatory:
-	--name 
+	--name
 		specify the name of the alert type for triggers.
 	or
 	--id
-		specify the alert type id for triggers.	
+		specify the alert type id for triggers.
 `,
 		Run: func(cmd *Command, args []string) {
 			var id int64
@@ -378,13 +378,13 @@ Create a new CoScale alert trigger.
 The flags for new trigger action are:
 
 Mandatory:
-	--name 
+	--name
 		Name for the new trigger.
 	--config
 		The trigger configuration which is formatted as follows:
-			For metrics with DataType DOUBLE: 
+			For metrics with DataType DOUBLE:
 				avg(300) > 25 (if the average value over 5 minutes is larger than 25, trigger an alert.)
-			For metrics with DataType HISTOGRAM: 
+			For metrics with DataType HISTOGRAM:
 				avg(99, 300) >= 50 (if the average of the 99th percentile over 5 minutes is larger or equal to 50, trigger an alert.)
 	--metric
 		The name of the metric which will be the subject of the alert.
@@ -394,7 +394,7 @@ Mandatory:
 Optional:
 	--autoresolve
 		The amount of seconds to wait until the alert will be auto-resolved [default: null]
-	--typename 
+	--typename
 		specify the name of the alert type for triggers. [default: "Default alerts"]
 	or
 	--typeid
@@ -409,7 +409,7 @@ Optional:
 	--servergroup
 		The servergroup name for which the alert will be triggered.
 	or
-	--servergroupid 
+	--servergroupid
 		The servergroup id for which the alert will be triggered.
 	Note: if no server or servergroup is provided the trigger will be set for the entire application.
 `,
@@ -505,23 +505,23 @@ Update a existing CoScale alert trigger.
 The flags for update trigger action are:
 
 Mandatory:
-	--name 
+	--name
 		Name for the trigger.
 Optional:
 	--id
 		Unique identifier, if we want to update the name of the trigger, this become mandatory.
 	--autoresolve
 		The amount of seconds to wait until the alert will be auto-resolved. [default: null]
-	--typename 
+	--typename
 		specify the name of the alert type for triggers.
 	or
 	--typeid
 		specify the alert type id for triggers.
 	--config
 		The trigger configuration which is formatted as follows:
-			For metrics with DataType DOUBLE: 
+			For metrics with DataType DOUBLE:
 				avg(300) > 25 (if the average value over 5 minutes is larger than 25, trigger an alert.)
-			For metrics with DataType HISTOGRAM: 
+			For metrics with DataType HISTOGRAM:
 				avg(99, 300) >= 50 (if the average of the 99th percentile over 5 minutes is larger or equal to 50, trigger an alert.)
 	--metric
 		The name of the metric which will be the subject of the alert.
@@ -538,7 +538,7 @@ Optional:
 	--servergroup
 		The servergroup name for which the alert will be triggered.
 	or
-	--servergroupid 
+	--servergroupid
 		The servergroup id for which the alert will be triggered.
 	Note: if no server or servergroup is provided the tigger will be set for entire application.
 `,
@@ -675,16 +675,16 @@ Delete a trigger from an alert type group.
 The flags for "delete" trigger action are:
 
 Mandatory:
-	--id 
+	--id
 		Specify the trigger id.
-	or	
+	or
 	--name
 		Specify the trigger name.
-	--typeid 
+	--typeid
 		Specify the alert type id.
-	or	
+	or
 	--type
-		Specify the alert type name.	
+		Specify the alert type name.
 `,
 		Run: func(cmd *Command, args []string) {
 			var id, typeID int64
@@ -729,7 +729,7 @@ Mandatory:
 				id = alertTriggerObj.ID
 			}
 
-			cmd.PrintResult("", cmd.Capi.DeleteObjectFromGroupByID("alerttype", "trigger", typeID, id))
+			cmd.PrintResult(cmd.Capi.DeleteObjectFromGroupByID("alerttype", "trigger", typeID, id))
 		},
 	},
 }

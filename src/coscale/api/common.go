@@ -96,31 +96,46 @@ func (api *Api) GetObejctRefByNameFromGroup(objectGroup, objectName string, grou
 }
 
 // DeleteObject will delete a object
-func (api *Api) DeleteObject(objectName string, object *Object) error {
-	if err := api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/%ss/%d/", api.AppID, objectName, (*object).GetId()), nil, false, nil); err != nil {
-		return err
+func (api *Api) DeleteObject(objectName string, object *Object) (string, error) {
+	var result string
+
+	if err := api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/%ss/%d/", api.AppID, objectName, (*object).GetId()), nil, true, &result); err != nil {
+		return "", err
 	}
-	return nil
+	return result, nil
 }
 
 // AddObjectToGroup adds a object (metric, event, etc) to a group of objects.
-func (api *Api) AddObjectToGroup(objectName string, object Object, group Object) error {
-	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/%sgroups/%d/%ss/%d/", api.AppID, objectName, group.GetId(), objectName, object.GetId()), nil, false, nil); err != nil {
+func (api *Api) AddObjectToGroup(objectName string, object Object, group Object) (string, error) {
+	var objectGroupName = GetObjectGroupName(objectName)
+
+	var result string
+	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/%ss/%d/%ss/%d/", api.AppID, objectGroupName, group.GetId(), objectName, object.GetId()), nil, true, &result); err != nil {
 		if IsRequestError(err) {
 			// The object is already in the group. Ignore this error.
 		} else {
-			return err
+			return "", err
 		}
 	}
-	return nil
+	return result, nil
 }
 
 // DeleteObjectFromGroup remove a object (metric, event, etc) from a group of objects.
-func (api *Api) DeleteObjectFromGroup(objectName string, object Object, group Object) error {
-	return api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/%sgroups/%d/%ss/%d/", api.AppID, objectName, group.GetId(), objectName, object.GetId()), nil, false, nil)
+func (api *Api) DeleteObjectFromGroup(objectName string, object Object, group Object) (string, error) {
+	var objectGroupName = GetObjectGroupName(objectName)
+
+	var result string
+	if err := api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/%ss/%d/%ss/%d/", api.AppID, objectGroupName, group.GetId(), objectName, object.GetId()), nil, true, &result); err != nil {
+		return "", err
+	}
+	return result, nil
 }
 
 // DeleteObjectFromGroupByID remove a object (metric, event, etc) from a group of objects.
-func (api *Api) DeleteObjectFromGroupByID(groupName, objectName string, groupID, id int64) error {
-	return api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/%ss/%d/%ss/%d/", api.AppID, groupName, groupID, objectName, id), nil, false, nil)
+func (api *Api) DeleteObjectFromGroupByID(groupName, objectName string, groupID, id int64) (string, error) {
+	var result string
+	if err := api.makeCall("DELETE", fmt.Sprintf("/api/v1/app/%s/%ss/%d/%ss/%d/", api.AppID, groupName, groupID, objectName, id), nil, true, &result); err != nil {
+		return "", err
+	}
+	return result, nil
 }
