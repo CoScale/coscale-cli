@@ -19,4 +19,4 @@ deploy:
   file: bin/coscale-cli$EXTENSION
   skip_cleanup: true
   on:
-    repo: tags
+    tags: true
