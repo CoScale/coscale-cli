@@ -47,7 +47,7 @@ Get a CoScale %[1]s object by id or by name.
 
 The flags for %[2]s get action are:
 Only one of them is necessary to be specified
-	--name 
+	--name
 		specify the %[1]s name.
 	--id
 		specify the %[1]s id.
@@ -83,7 +83,7 @@ Delete a %[1]s by the name or id.
 
 The flags for %[2]s delete action are:
 Only one of them is necessary to be specified
-	--name 
+	--name
 		specify the %[1]s name.
 	--id
 		specify the %[1]s id.
@@ -108,7 +108,7 @@ Only one of them is necessary to be specified
 			if err != nil {
 				cmd.PrintResult("", err)
 			}
-			cmd.PrintResult("", cmd.Capi.DeleteObject(objectName, &object))
+			cmd.PrintResult(cmd.Capi.DeleteObject(objectName, &object))
 		},
 	}
 }
@@ -124,16 +124,16 @@ Add a existing %[1]s to a %[1]s group.
 The flags for "add%[2]s" %[1]sgroup action are:
 
 Mandatory:
-	--id%[2]s 
+	--id%[2]s
 		specify the %[1]s id.
-	or	
+	or
 	--name%[2]s
 		specify the %[1]s name.
-	--idGroup 
+	--idGroup
 		specify the group id.
-	or	
+	or
 	--nameGroup
-		specify the group name.	
+		specify the group name.
 `, objectName, capitalize(objectName)),
 		Run: func(cmd *Command, args []string) {
 			var idGroup, idObject int64
@@ -158,10 +158,11 @@ Mandatory:
 				cmd.PrintResult("", err)
 			}
 
+			objectGroupName := api.GetObjectGroupName(objectName)
 			if idGroup != -1 {
-				err = cmd.Capi.GetObjectRef(fmt.Sprintf("%sgroup", objectName), idGroup, group)
+				err = cmd.Capi.GetObjectRef(objectGroupName, idGroup, group)
 			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName(fmt.Sprintf("%sgroup", objectName), nameGroup, group)
+				err = cmd.Capi.GetObejctRefByName(objectGroupName, nameGroup, group)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -169,7 +170,7 @@ Mandatory:
 			if err != nil {
 				cmd.PrintResult("", err)
 			}
-			cmd.PrintResult("", cmd.Capi.AddObjectToGroup(objectName, object, group))
+			cmd.PrintResult(cmd.Capi.AddObjectToGroup(objectName, object, group))
 		},
 	}
 }
@@ -185,16 +186,16 @@ Delete a %[1]s from a %[1]s group.
 The flags for "delete%[2]s" %[1]sgroup action are:
 
 Mandatory:
-	--id%[2]s 
+	--id%[2]s
 		specify the %[1]s id.
-	or	
+	or
 	--name%[2]s
 		specify the %[1]s name.
-	--idGroup 
+	--idGroup
 		specify the group id.
-	or	
+	or
 	--nameGroup
-		specify the group name.	
+		specify the group name.
 `, objectName, capitalize(objectName)),
 		Run: func(cmd *Command, args []string) {
 			var idGroup, idObject int64
@@ -218,10 +219,12 @@ Mandatory:
 			if err != nil {
 				cmd.PrintResult("", err)
 			}
+
+			var objectGroupName = api.GetObjectGroupName(objectName)
 			if idGroup != -1 {
-				err = cmd.Capi.GetObjectRef(fmt.Sprintf("%sgroup", objectName), idGroup, group)
+				err = cmd.Capi.GetObjectRef(objectGroupName, idGroup, group)
 			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName(fmt.Sprintf("%sgroup", objectName), nameGroup, group)
+				err = cmd.Capi.GetObejctRefByName(objectGroupName, nameGroup, group)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -229,7 +232,7 @@ Mandatory:
 			if err != nil {
 				cmd.PrintResult("", err)
 			}
-			cmd.PrintResult("", cmd.Capi.DeleteObjectFromGroup(objectName, object, group))
+			cmd.PrintResult(cmd.Capi.DeleteObjectFromGroup(objectName, object, group))
 		},
 	}
 }

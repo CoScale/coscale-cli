@@ -23,6 +23,7 @@ var MetricObject = NewCommand("metric", "metric <action> [--<field>='<data>']", 
 var MetricActions = []*Command{
 	ListCmd("metric"),
 	GetCmd("metric"),
+	DeleteCmd(&api.Metric{}, "metric"),
 	{
 		Name:      "listbygroup",
 		UsageLine: `metric listbygroup (--id | --name)`,
@@ -34,8 +35,8 @@ The flags for listbygroup metric action are:
 Mandatory:
 	--id
 		Unique identifier for a metricgroup
-	or 
-	--name 
+	or
+	--name
 		specify the name of the metrigroup.
 `,
 		Run: func(cmd *Command, args []string) {
@@ -73,10 +74,10 @@ Create a new CoScale metric object.
 The flags for new metric action are:
 
 Mandatory:
-	--name 
+	--name
 		specify the name of the metric.
 	--dataType
-		The following data types are defined: "LONG", "DOUBLE", "HISTOGRAM".
+		The following data types are defined: "LONG", "DOUBLE", "HISTOGRAM", "COUNT", "COUNTER", "BINARY".
 	--subject
 		A metric is defined on either a "SERVER", "GROUP" or "APPLICATION". This allows for metric per server, per server group or on the whole application.
 Optional:
@@ -120,7 +121,7 @@ Update a CoScale metric object.
 The flags for update metric action are:
 
 Mandatory:
-	--name 
+	--name
 		specify the name of the metric.
 	--id
 		Unique identifier, if we want to update the name of a metric, this become mandatory
@@ -199,6 +200,7 @@ var MetricGroupObject = NewCommand("metricgroup", "metricgroup <action> [--<fiel
 var MetricGroupActions = []*Command{
 	ListCmd("metricgroup"),
 	GetCmd("metricgroup"),
+	DeleteCmd(&api.MetricGroup{}, "metricgroup"),
 	AddObjToGroupCmd("metric", &api.Metric{}, &api.MetricGroup{}),
 	DeleteObjFromGroupCmd("metric", &api.Metric{}, &api.MetricGroup{}),
 	{
@@ -210,7 +212,7 @@ Create a new CoScale metricgroup object.
 The flags for new metricgroup action are:
 
 Mandatory:
-	--name 
+	--name
 		Name for the metric group.
 	--subject
 		The subject type of the metric group. "APPLICATION", "SERVERGROUP" or "SERVER".
@@ -249,7 +251,7 @@ Update a CoScale metricgroup object.
 The flags for update metricgroup action are:
 
 Mandatory:
-	--name 
+	--name
 		Specify the name of the metricgroup.
 Optional:
 	--id

@@ -198,7 +198,7 @@ func (api *Api) InsertData(data []*ApiData) (string, error) {
 }
 
 //make the json object(with the informations provided on command line) required for GetData-getBatch request
-func getBatchData(start, stop int, metricId int64, subjectIds, aggregator, dimensionsSpecs string, aggregateSubjects bool) string {
+func getBatchData(start, stop int, metricId int64, subjectIds, aggregator, viewType, dimensionsSpecs string, aggregateSubjects bool) string {
 	var buffer bytes.Buffer
 	var now = int(time.Now().Unix())
 	// negative and null values are seconds ago
@@ -215,14 +215,14 @@ func getBatchData(start, stop int, metricId int64, subjectIds, aggregator, dimen
 		}
 		buffer.WriteString(fmt.Sprintf(`%s`, id))
 	}
-	buffer.WriteString(fmt.Sprintf(`", "aggregator":"%s", "dimensionsSpecs":%s, "aggregateSubjects":%t}]}`, aggregator, dimensionsSpecs, aggregateSubjects))
+	buffer.WriteString(fmt.Sprintf(`", "aggregator":"%s", "viewtype":"%s", "dimensionsSpecs":%s, "aggregateSubjects":%t}]}`, aggregator, viewType, dimensionsSpecs, aggregateSubjects))
 	return buffer.String()
 }
 
 // GetData performs an API call to retrieve data from the API.
-func (api *Api) GetData(start, stop int, metricId int64, subjectIds, aggregator, dimensionsSpecs string, aggregateSubjects bool) (string, error) {
+func (api *Api) GetData(start, stop int, metricId int64, subjectIds, aggregator, viewType, dimensionsSpecs string, aggregateSubjects bool) (string, error) {
 	postData := map[string][]string{
-		"data": {getBatchData(start, stop, metricId, subjectIds, aggregator, dimensionsSpecs, aggregateSubjects)},
+		"data": {getBatchData(start, stop, metricId, subjectIds, aggregator, viewType, dimensionsSpecs, aggregateSubjects)},
 	}
 	var result string
 	if err := api.makeCall("POST", fmt.Sprintf("/api/v1/app/%s/data/dimension/getCalculated/", api.AppID), postData, true, &result); err != nil {
