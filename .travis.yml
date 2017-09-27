@@ -4,6 +4,7 @@ go:
 env:
 - MY_GOOS=linux MY_GOARCH=amd64 EXTENSION=
 - MY_GOOS=windows MY_GOARCH=amd64 EXTENSION=.exe
+- MY_GOOS=darwin MY_GOARCH=amd64 EXTENSION=.bin
 before_install:
 - export GOOS="${MY_GOOS}"
 - export GOARCH="${MY_GOARCH}"
