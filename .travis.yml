@@ -13,7 +13,9 @@ install:
 - export CGO_ENABLED=0
 - mkdir -p bin
 script:
-- go test -timeout 20m -a -v coscale/...
+- if [ "$MYGOOS" == "linux" ]; then
+    go test -timeout 20m -a -v coscale/... || travis_terminate 1
+  fi
 - go build -a -tags netgo -ldflags '-w' -o bin/coscale-cli$EXTENSION coscale
 deploy:
   provider: releases
