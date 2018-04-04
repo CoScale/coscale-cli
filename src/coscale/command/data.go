@@ -43,12 +43,12 @@ Optional:
 		[[<dimension_id>, <dimension_spec>],
 		 [<dimension_id>, <dimension_spec>], ...]
 
-		<dimension_spec> = "*" will return data for all dimensionvalues separately
-					| "<dimension_value_id>, <dimension_value_id>, ..."
+ 		<dimension_spec> = "*" will return data for all dimensionvalues separately
+ 					| "<dimension_value_id>, <dimension_value_id>, ..."
 					| "<aggregator>(*)"
 					| "<aggregator>([<dimension_value_id>, <dimension_value_id>, ...])"
 
-		aggregators: AVG, MIN, MAX
+	    aggregators: AVG, MIN, MAX
 
 		e.g.: --dimensionsSpecs='[[1,"AVG(*)"]]'
 		      --dimensionsSpecs='[[2,"*"]]'
@@ -96,8 +96,11 @@ Mandatory:
 			"M<metric id>:S<subject Id>:<seconds ago>:[<no of samples>,<percentile width>,[<percentile data>]]"
 			eg: --data="M1:S1:-60:[100,50,[1,2,3,4,5,6]]"
 
+		Sending multiple data points for the same metric and subject is possible using the folowing format:
+			--data="M1:S100:[-60:1.2,0:1.1]"
+
 		Sending multiple data entries is possible by using semicolon as separator.
-			eg: --data="M1:S100:-60:1.2;M1:S100:0:2"
+			eg: --data="M1:S100:-60:1.2;M2:S100:0:2"
 
 		The time is formatted as follows:
 		    Positive numbers are interpreted as unix timestamps in seconds.
@@ -140,7 +143,7 @@ Deprecated:
 				data = datapoint
 			}
 
-			// ParseDataPoint coult return data for multiple calls for same metricIDs with different subjectID
+			// ParseDataPoint could return data for multiple calls for same metricIDs with different subjectID
 			callsData, err := api.ParseDataPoint(data, timeInSecAgo)
 			if err != nil {
 				cmd.PrintResult("", err)
