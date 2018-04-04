@@ -24,6 +24,8 @@ const (
 	DEFAULT_STRING_VALUE string = `!>dUmmy<!`
 	// DEFAULT_INT64_VALUE defines the default value for an integer flag.
 	DEFAULT_INT64_VALUE int64 = math.MinInt64
+	// MaxUploadSize for data call.
+	MaxUploadSize int = 10 * 1024 * 1024 // 10MB
 )
 
 const (
