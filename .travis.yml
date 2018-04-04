@@ -10,9 +10,11 @@ before_install:
 - export GOARCH="${MY_GOARCH}"
 install:
 - export GOPATH=`pwd`
+- export CGO_ENABLED=0
 - mkdir -p bin
 script:
-- go build -o bin/coscale-cli$EXTENSION coscale
+- go test -timeout 20m -a -v coscale/...
+- go build -a -tags netgo -ldflags '-w' -o bin/coscale-cli$EXTENSION coscale
 deploy:
   provider: releases
   api_key:
