@@ -83,12 +83,12 @@ Optional:
 	},
 	{
 		Name:      "insert",
-		UsageLine: `data insert (--data)`,
+		UsageLine: `data insert (--data <data> | --stdin)`,
 		Long: `
 Insert data for metrics into the datastore.
 
 The flags for data insert action are:
-Mandatory:
+Optional:
 	--data
 		To send data for DOUBLE metric data typ use the following format:
 			"M<metric id>:S<subject Id>:<time>:<value/s>"
@@ -112,19 +112,8 @@ Mandatory:
 			we want to show the total number of queued messages, but we also want to be able
 			to split these into the number of queued messages per queue.
 			eg: --data='M1:S1:-60:1.3:{"Queue":"q1","Data Center":"data center 1"};M2:S1:-60:1.2'
-Optional:
 	--stdin
 		Specify if the data will be interted on stdin. [default: false]
-
-Deprecated:
-	--datapoint
-		To send data for DOUBLE metric data type use the following format:
-			"M<metric id>:S<subject Id>:<seconds ago>:<value/s>"
-			eg:	--datapoint="M1:S100:120:1.2
-
-		To send data for HISTOGRAM metric data type use the following format:
-			"M<metric id>:S<subject Id>:<seconds ago>:[<no of samples>,<percentile width>,[<percentile data>]]"
-			eg: --datapoint="M1:S1:60:[100,50,[1,2,3,4,5,6]]"
 `,
 		Run: func(cmd *Command, args []string) {
 			var err error
