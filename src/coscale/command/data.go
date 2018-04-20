@@ -1,7 +1,9 @@
 package command
 
 import (
+	"bufio"
 	"coscale/api"
+	"fmt"
 	"os"
 )
 
@@ -81,12 +83,12 @@ Optional:
 	},
 	{
 		Name:      "insert",
-		UsageLine: `data insert (--data)`,
+		UsageLine: `data insert (--data <data> | --stdin)`,
 		Long: `
 Insert data for metrics into the datastore.
 
 The flags for data insert action are:
-Mandatory:
+Optional:
 	--data
 		To send data for DOUBLE metric data typ use the following format:
 			"M<metric id>:S<subject Id>:<time>:<value/s>"
@@ -110,27 +112,32 @@ Mandatory:
 			we want to show the total number of queued messages, but we also want to be able
 			to split these into the number of queued messages per queue.
 			eg: --data='M1:S1:-60:1.3:{"Queue":"q1","Data Center":"data center 1"};M2:S1:-60:1.2'
-
-
-Deprecated:
-	--datapoint
-		To send data for DOUBLE metric data type use the following format:
-			"M<metric id>:S<subject Id>:<seconds ago>:<value/s>"
-			eg:	--datapoint="M1:S100:120:1.2
-
-		To send data for HISTOGRAM metric data type use the following format:
-			"M<metric id>:S<subject Id>:<seconds ago>:[<no of samples>,<percentile width>,[<percentile data>]]"
-			eg: --datapoint="M1:S1:60:[100,50,[1,2,3,4,5,6]]"
+	--stdin
+		Specify if the data will be interted on stdin. [default: false]
 `,
 		Run: func(cmd *Command, args []string) {
-			var datapoint string
-			var data string
+			var err error
+			var datapoint, data string
+			var stdin bool
 
 			cmd.Flag.Usage = func() { cmd.PrintUsage() }
 
 			cmd.Flag.StringVar(&datapoint, "datapoint", DEFAULT_STRING_FLAG_VALUE, "")
 			cmd.Flag.StringVar(&data, "data", DEFAULT_STRING_FLAG_VALUE, "")
+			cmd.Flag.BoolVar(&stdin, "stdin", false, "Specify if the data will be interted on stdin.")
 			cmd.ParseArgs(args)
+
+			if stdin {
+				message := fmt.Sprintf("%s\n\nPlease insert the data followed by a new line to submit...\n\n", cmd.Long)
+				fmt.Fprintln(os.Stdout, message)
+
+				in := bufio.NewReader(os.Stdin)
+				data, err = in.ReadString('\n')
+
+				if err != nil {
+					cmd.PrintResult("", err)
+				}
+			}
 
 			if datapoint == DEFAULT_STRING_FLAG_VALUE && data == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
