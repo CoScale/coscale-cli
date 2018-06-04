@@ -53,8 +53,8 @@ type AlertTrigger struct {
 	Metric      int64
 	Config      string
 	OnApp       bool
-	Group       int64 // Optional
-	Server      int64 // Optional
+	GroupID     int64 // Optional
+	ServerID    int64 // Optional
 	Source      string
 	Version     int64
 }
@@ -198,7 +198,6 @@ func (api *Api) UpdateTrigger(typeID int64, trigger *AlertTrigger) (string, erro
 	data := map[string][]string{
 		"name":        {trigger.Name},
 		"description": {trigger.Description},
-		"metric":      {fmt.Sprintf("%d", trigger.Metric)},
 		"config":      {trigger.Config},
 		"onApp":       {fmt.Sprintf("%t", trigger.OnApp)},
 		"source":      {trigger.Source},
@@ -206,10 +205,13 @@ func (api *Api) UpdateTrigger(typeID int64, trigger *AlertTrigger) (string, erro
 	}
 
 	// Set the option values if they have value.
-	if trigger.Server != 0 {
-		data["server"] = []string{fmt.Sprintf("%d", trigger.Server)}
-	} else if trigger.Group != 0 {
-		data["group"] = []string{fmt.Sprintf("%d", trigger.Group)}
+	if trigger.Metric != 0 {
+		data["metric"] = []string{fmt.Sprintf("%d", trigger.Metric)}
+	}
+	if trigger.ServerID != 0 {
+		data["server"] = []string{fmt.Sprintf("%d", trigger.ServerID)}
+	} else if trigger.GroupID != 0 {
+		data["group"] = []string{fmt.Sprintf("%d", trigger.GroupID)}
 	}
 	if trigger.AutoResolve != 0 {
 		data["autoresolveSeconds"] = []string{fmt.Sprintf("%d", trigger.AutoResolve)}
