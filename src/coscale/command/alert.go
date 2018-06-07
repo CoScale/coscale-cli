@@ -498,25 +498,25 @@ Optional:
 	},
 	{
 		Name:      "update",
-		UsageLine: `alert trigger update (--name | --id) [--autoresolve --typename|--typeid --name --config --metric|--metricid --description --server|--serverid --servergroup|--servergroupid]`,
+		UsageLine: `alert trigger update (--typeid --id|--typename --name) [--autoresolve --name --config --metric|--metricid --description --server|--serverid --servergroup|--servergroupid]`,
 		Long: `
 Update a existing CoScale alert trigger.
 
 The flags for update trigger action are:
 
-Mandatory:
+Mandatory
+	--typeid
+		Specify the alert type id for the trigger.
+	--id
+		Unique identifier, if we want to update the name of the trigger, this become mandatory.
+	or
+	--typename
+		Specify the name of the alert type for the trigger.
 	--name
 		Name for the trigger.
 Optional:
-	--id
-		Unique identifier, if we want to update the name of the trigger, this become mandatory.
 	--autoresolve
 		The amount of seconds to wait until the alert will be auto-resolved. [default: null]
-	--typename
-		specify the name of the alert type for triggers.
-	or
-	--typeid
-		specify the alert type id for triggers.
 	--config
 		The trigger configuration which is formatted as follows:
 			For metrics with DataType DOUBLE:
@@ -566,7 +566,12 @@ Optional:
 			cmd.ParseArgs(args)
 
 			// Check if values were provided for mandatory flags.
-			if name == DEFAULT_STRING_FLAG_VALUE {
+			if id == -1 && name == DEFAULT_STRING_FLAG_VALUE {
+				cmd.PrintUsage()
+				os.Exit(EXIT_FLAG_ERROR)
+			}
+
+			if typeID == -1 && typeName == DEFAULT_STRING_FLAG_VALUE {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
 			}
@@ -574,7 +579,7 @@ Optional:
 			// Get the metric id
 			var metricObj = &api.Metric{}
 			var err error
-			if metricID == -1 {
+			if metricID == -1 && metric != DEFAULT_STRING_FLAG_VALUE {
 				err = cmd.Capi.GetObejctRefByName("metric", metric, metricObj)
 				if err != nil {
 					cmd.PrintResult("", err)
@@ -604,9 +609,6 @@ Optional:
 				// if didn't exit due to error...
 				serverGroupID = serverGroupObj.ID
 			}
-
-			// if no error and no server or servergroup id was found then the trigger is for app.
-			onApp = serverID == -1 && serverGroupID == -1
 
 			// get the alert type for the trigger
 			var alertTypeObj = &api.AlertType{}
@@ -652,13 +654,14 @@ Optional:
 				alertTriggerObj.Config = config
 			}
 			if serverGroupID != -1 {
-				alertTriggerObj.Group = serverGroupID
+				alertTriggerObj.GroupID = serverGroupID
 			}
 			if serverID != -1 {
-				alertTriggerObj.Server = serverID
+				alertTriggerObj.ServerID = serverID
 			}
 
-			onApp = serverGroupID == -1 && serverID == -1
+			onApp = alertTriggerObj.GroupID == 0 && alertTriggerObj.ServerID == 0
+
 			if alertTriggerObj.OnApp != onApp {
 				alertTriggerObj.OnApp = onApp
 			}

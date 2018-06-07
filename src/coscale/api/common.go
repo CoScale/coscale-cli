@@ -2,7 +2,7 @@ package api
 
 import (
 	"fmt"
-	"strings"
+	"net/url"
 )
 
 //some of the api calls will be common for different objects
@@ -53,9 +53,9 @@ func (api *Api) GetObjectRefFromGroup(objectGroup, objectName string, groupID, o
 
 // GetObjectByName will return the object (json) specified by objectName and name
 func (api *Api) GetObjectByName(objectName string, name string) (string, error) {
-	// In go %% is % escaped, we need to escape the name to work with string fmt.
-	name = strings.Replace(name, "%", "%%", -1)
-	name = strings.Replace(name, " ", "%20", -1)
+	// URL Encoded.
+	name = url.QueryEscape(name)
+
 	var result string
 	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/%ss/?selectByName=%s", api.AppID, objectName, name), nil, true, &result); err != nil {
 		return "", err
@@ -65,9 +65,9 @@ func (api *Api) GetObjectByName(objectName string, name string) (string, error) 
 
 // GetObejctRefByName will put in result a reference to the oject specified by objectName and name
 func (api *Api) GetObejctRefByName(objectName string, name string, result Object) error {
-	// In go %% is % escaped, we need to escape the name to work with string fmt.
-	name = strings.Replace(name, "%", "%%", -1)
-	name = strings.Replace(name, " ", "%20", -1)
+	// URL Encoded.
+	name = url.QueryEscape(name)
+
 	objects := []*Object{&result}
 	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/%ss/?selectByName=%s", api.AppID, objectName, name), nil, false, &objects); err != nil {
 		return err
@@ -81,9 +81,9 @@ func (api *Api) GetObejctRefByName(objectName string, name string, result Object
 
 // GetObejctRefByNameFromGroup will return the object specified by objectName from objectGroup that have a certain name
 func (api *Api) GetObejctRefByNameFromGroup(objectGroup, objectName string, groupID int64, name string, result Object) error {
-	// In go %% is % escaped, we need to escape the name to work with string fmt.
-	name = strings.Replace(name, "%", "%%", -1)
-	name = strings.Replace(name, " ", "%20", -1)
+	// URL Encoded.
+	name = url.QueryEscape(name)
+
 	objects := []*Object{&result}
 	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/%ss/%d/%ss/?selectByName=%s", api.AppID, objectGroup, groupID, objectName, name), nil, false, &objects); err != nil {
 		return err
