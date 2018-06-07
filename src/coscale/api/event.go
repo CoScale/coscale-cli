@@ -80,6 +80,15 @@ func (api *Api) DeleteEvent(event *Event) error {
 	return nil
 }
 
+// ListEventData will return a list of eventdata for the event Id
+func (api *Api) ListEventData(eventId, since, before int64) (string, error) {
+	var result string
+	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/events/%d/data/?start=%d&stop=%d", api.AppID, eventId, since, before), nil, true, &result); err != nil {
+		return "", err
+	}
+	return result, nil
+}
+
 // GetEventData will return the eventdata by the event Id and eventdata Id.
 func (api *Api) GetEventData(eventId, eventdataId int64, eventData *EventData) error {
 	if err := api.makeCall("GET", fmt.Sprintf("/api/v1/app/%s/events/%d/data/get/%d/", api.AppID, eventId, eventdataId), nil, false, &eventData); err != nil {
