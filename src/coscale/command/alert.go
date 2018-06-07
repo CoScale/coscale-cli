@@ -498,23 +498,22 @@ Optional:
 	},
 	{
 		Name:      "update",
-		UsageLine: `alert trigger update (--name|--id --typename|--typeid) [--autoresolve --name --config --metric|--metricid --description --server|--serverid --servergroup|--servergroupid]`,
+		UsageLine: `alert trigger update (--typeid --id|--typename --name) [--autoresolve --name --config --metric|--metricid --description --server|--serverid --servergroup|--servergroupid]`,
 		Long: `
 Update a existing CoScale alert trigger.
 
 The flags for update trigger action are:
 
-Mandatory:
-	--name
-		Name for the trigger.
-	or
+Mandatory
+	--typeid
+		Specify the alert type id for the trigger.
 	--id
 		Unique identifier, if we want to update the name of the trigger, this become mandatory.
-	--typename
-		specify the name of the alert type for triggers.
 	or
-	--typeid
-		specify the alert type id for triggers.
+	--typename
+		Specify the name of the alert type for the trigger.
+	--name
+		Name for the trigger.
 Optional:
 	--autoresolve
 		The amount of seconds to wait until the alert will be auto-resolved. [default: null]
