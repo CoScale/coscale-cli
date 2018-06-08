@@ -24,7 +24,7 @@ Create new event category.
 The flags for new event action are:
 
 Mandatory:
-	--name 
+	--name
 		specify name of the event.
 Optional:
 	--description
@@ -59,7 +59,7 @@ The flags for update event action are:
 The name or id should be specified
 	--id
 		Unique identifier, if we want to update the name of the event, this become mandatory
-	--name 
+	--name
 		specify the event name of the event.
 	--description
 		specify the description of the event.
@@ -83,7 +83,7 @@ The name or id should be specified
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("event", id, eventObj)
 			} else if name != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("event", name, eventObj)
+				err = cmd.Capi.GetObjectRefByName("event", name, eventObj)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -138,7 +138,7 @@ Please use 'event newdata' instead.
 				if id != -1 {
 					err = cmd.Capi.GetObjectRef("event", id, eventObj)
 				} else if name != DEFAULT_STRING_FLAG_VALUE {
-					err = cmd.Capi.GetObejctRefByName("event", name, eventObj)
+					err = cmd.Capi.GetObjectRefByName("event", name, eventObj)
 				} else {
 					flagErr = true
 				}
@@ -161,18 +161,18 @@ Insert event data.
 
 The flags for newdata event action are:
 Mandatory:
-	--name 
+	--name
 		specify the event name.
 	--id
 		specify the event id.
 	Only one from id/name is necessary.
-		
+
 	--message
-		The message for the event data.	
+		The message for the event data.
 	--subject
 		The subject for the event data. The subject is structured as follows:
 		s<serverId> for a server, g<servergroupId> for a server group, a for the application.
-Optional:	
+Optional:
 	--attribute
 		JSON String detailing the progress of the event.
 	--timestamp
@@ -201,7 +201,7 @@ Optional:
 				if id != -1 {
 					err = cmd.Capi.GetObjectRef("event", id, eventObj)
 				} else if name != DEFAULT_STRING_FLAG_VALUE {
-					err = cmd.Capi.GetObejctRefByName("event", name, eventObj)
+					err = cmd.Capi.GetObjectRefByName("event", name, eventObj)
 				} else {
 					flagErr = true
 				}
@@ -224,17 +224,17 @@ Update event data.
 
 The flags for updatedata event action are:
 Mandatory:
-	--name 
+	--name
 		specify the event name.
 	--id
 		specify the event id.
 	Only one from id/name is necessary.
-	
+
 	--dataid
 		specify the unique id of the event data.
 Optional:
 	--message
-		The message for the event data.	
+		The message for the event data.
 	--subject
 		The subject for the event data. The subject is structured as follows:
 		s<serverId> for a server, g<servergroupId> for a server group, a for the application.
@@ -267,7 +267,7 @@ Optional:
 				if id != -1 {
 					err = cmd.Capi.GetObjectRef("event", id, eventObj)
 				} else if name != DEFAULT_STRING_FLAG_VALUE {
-					err = cmd.Capi.GetObejctRefByName("event", name, eventObj)
+					err = cmd.Capi.GetObjectRefByName("event", name, eventObj)
 				} else {
 					flagErr = true
 				}
@@ -310,7 +310,7 @@ Delete a eventdata entry.
 
 The flags for event deletedata action are:
 Mandatory:
-	--id 
+	--id
 		specify the event id.
 	--dataid
 		specify the unique id of the event data.

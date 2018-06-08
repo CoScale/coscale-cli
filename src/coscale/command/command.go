@@ -131,7 +131,7 @@ func (c *Command) PrintFullUsage() {
 }
 
 // GetApi returns a Api object
-func (c *Command) GetApi(baseUrl, accessToken, appId string, rawOutput bool) *api.Api {
+func (c *Command) GetApi(baseUrl, accessToken, appId string, rawOutput, verbose bool) *api.Api {
 	if accessToken == "" || appId == "" {
 		configPath, err := GetConfigPath()
 		if err != nil {
@@ -145,25 +145,27 @@ func (c *Command) GetApi(baseUrl, accessToken, appId string, rawOutput bool) *ap
 		accessToken = config.AccessToken
 		appId = config.AppId
 	}
-	return api.NewApi(baseUrl, accessToken, appId, rawOutput)
+	return api.NewApi(baseUrl, accessToken, appId, rawOutput, verbose)
 }
 
 // ParseArgs takes the API configuration from the args and stores them in the Command.
 func (c *Command) ParseArgs(args []string) {
 	//add the flags for the api configuration
 	var baseUrl, accessToken, appId string
-	var rawOutput bool
+	var rawOutput, verbose bool
 	c.Flag.StringVar(&baseUrl, "api-url", "https://api.coscale.com", "Base url for the api.")
 	c.Flag.StringVar(&appId, "app-id", "", "The application id.")
 	c.Flag.StringVar(&accessToken, "access-token", "", "A valid access token for the given application.")
 	c.Flag.BoolVar(&rawOutput, "rawOutput", false, "The returned json objects are returned formatted by default.")
+	c.Flag.BoolVar(&verbose, "verbose", false, "Print aditional util information.")
+
 	c.Flag.Parse(args)
 	unknownArgs := c.Flag.Args()
 	if len(unknownArgs) > 0 && unknownArgs[0] != "help" {
 		fmt.Fprintf(os.Stderr, "Unknown field %s\n", unknownArgs[0])
 		os.Exit(EXIT_FLAG_ERROR)
 	}
-	c.Capi = c.GetApi(strings.Trim(baseUrl, "/"), accessToken, appId, rawOutput)
+	c.Capi = c.GetApi(strings.Trim(baseUrl, "/"), accessToken, appId, rawOutput, verbose)
 }
 
 // PrintResult formats the result or error and exits the process with the appropriate exit code.
@@ -206,6 +208,10 @@ the credentials can also be provided on the command line using:
 		The application id.
 	--access-token
 		A valid access token for the given application.
+
+
+	--verbose
+		Print aditional util information.
 `
 
 var usageTemplate = `coscale-cli a tool for CoScale Api.
@@ -213,7 +219,7 @@ var usageTemplate = `coscale-cli a tool for CoScale Api.
 Usage:
 	{{.UsageLine}}
 {{if .Runnable}}
-{{.Name | printf "Action \"%s\" usage:"}} 
+{{.Name | printf "Action \"%s\" usage:"}}
 
 {{.Long | trim}}{{else}}
 {{.Name | printf "Actions for command \"%s\":"}}

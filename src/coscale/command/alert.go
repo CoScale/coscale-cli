@@ -265,7 +265,7 @@ Optional:
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("alerttype", id, alertTypeObj)
 			} else if name != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("alerttype", name, alertTypeObj)
+				err = cmd.Capi.GetObjectRefByName("alerttype", name, alertTypeObj)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -357,7 +357,7 @@ Mandatory:
 			if id != -1 {
 				cmd.PrintResult(cmd.Capi.GetTriggers(id))
 			} else if name != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("alerttype", name, alertTypeObj)
+				err = cmd.Capi.GetObjectRefByName("alerttype", name, alertTypeObj)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -449,7 +449,7 @@ Optional:
 			var metricObj = &api.Metric{}
 			var err error
 			if metricID == -1 {
-				err = cmd.Capi.GetObejctRefByName("metric", metric, metricObj)
+				err = cmd.Capi.GetObjectRefByName("metric", metric, metricObj)
 				if err != nil {
 					cmd.PrintResult("", err)
 				}
@@ -460,7 +460,7 @@ Optional:
 			// Get the server id
 			var serverObj = &api.Server{}
 			if serverID == -1 && server != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("server", server, serverObj)
+				err = cmd.Capi.GetObjectRefByName("server", server, serverObj)
 				if err != nil {
 					cmd.PrintResult("", err)
 				}
@@ -471,7 +471,7 @@ Optional:
 			// Get the servergroup id
 			var serverGroupObj = &api.ServerGroup{}
 			if serverGroupID == -1 && serverGroup != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("servergroup", serverGroup, serverGroupObj)
+				err = cmd.Capi.GetObjectRefByName("servergroup", serverGroup, serverGroupObj)
 				if err != nil {
 					cmd.PrintResult("", err)
 				}
@@ -485,7 +485,7 @@ Optional:
 			// get the alert type for the trigger
 			var alertTypeObj = &api.AlertType{}
 			if typeID == -1 {
-				err = cmd.Capi.GetObejctRefByName("alerttype", typeName, alertTypeObj)
+				err = cmd.Capi.GetObjectRefByName("alerttype", typeName, alertTypeObj)
 				if err != nil {
 					cmd.PrintResult("", err)
 				}
@@ -580,7 +580,7 @@ Optional:
 			var metricObj = &api.Metric{}
 			var err error
 			if metricID == -1 && metric != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("metric", metric, metricObj)
+				err = cmd.Capi.GetObjectRefByName("metric", metric, metricObj)
 				if err != nil {
 					cmd.PrintResult("", err)
 				}
@@ -591,7 +591,7 @@ Optional:
 			// Get the server id
 			var serverObj = &api.Server{}
 			if serverID == -1 && server != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("server", server, serverObj)
+				err = cmd.Capi.GetObjectRefByName("server", server, serverObj)
 				if err != nil {
 					cmd.PrintResult("", err)
 				}
@@ -602,7 +602,7 @@ Optional:
 			// Get the servergroup id
 			var serverGroupObj = &api.ServerGroup{}
 			if serverGroupID == -1 && serverGroup != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("servergroup", serverGroup, serverGroupObj)
+				err = cmd.Capi.GetObjectRefByName("servergroup", serverGroup, serverGroupObj)
 				if err != nil {
 					cmd.PrintResult("", err)
 				}
@@ -613,7 +613,7 @@ Optional:
 			// get the alert type for the trigger
 			var alertTypeObj = &api.AlertType{}
 			if typeID == -1 {
-				err = cmd.Capi.GetObejctRefByName("alerttype", typeName, alertTypeObj)
+				err = cmd.Capi.GetObjectRefByName("alerttype", typeName, alertTypeObj)
 				if err != nil {
 					cmd.PrintUsage()
 					os.Exit(EXIT_FLAG_ERROR)
@@ -627,7 +627,7 @@ Optional:
 			if id != -1 {
 				err = cmd.Capi.GetObjectRefFromGroup("alerttype", "trigger", typeID, id, alertTriggerObj)
 			} else if name != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByNameFromGroup("alerttype", "trigger", typeID, name, alertTriggerObj)
+				err = cmd.Capi.GetObjectRefByNameFromGroup("alerttype", "trigger", typeID, name, alertTriggerObj)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -713,7 +713,7 @@ Mandatory:
 			// get the alert type for the trigger
 			var alertTypeObj = &api.AlertType{}
 			if typeID == -1 {
-				err = cmd.Capi.GetObejctRefByName("alerttype", Type, alertTypeObj)
+				err = cmd.Capi.GetObjectRefByName("alerttype", Type, alertTypeObj)
 				if err != nil {
 					cmd.PrintResult("", err)
 				}
@@ -724,7 +724,7 @@ Mandatory:
 			// Get the existing trigger.
 			var alertTriggerObj = &api.AlertTrigger{}
 			if id == -1 {
-				err = cmd.Capi.GetObejctRefByNameFromGroup("alerttype", "trigger", typeID, name, alertTriggerObj)
+				err = cmd.Capi.GetObjectRefByNameFromGroup("alerttype", "trigger", typeID, name, alertTriggerObj)
 				if err != nil {
 					cmd.PrintResult("", err)
 				}

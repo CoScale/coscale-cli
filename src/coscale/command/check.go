@@ -28,7 +28,7 @@ var CheckObject = &Command{
 			cmd.PrintResult("", err)
 		}
 		// check if we can loggin with this configuration
-		api := api.NewApi(config.BaseUrl, config.AccessToken, config.AppId, false)
+		api := api.NewApi(config.BaseUrl, config.AccessToken, config.AppId, false, false)
 		err = api.Login()
 		if err != nil {
 			cmd.PrintResult("", err)

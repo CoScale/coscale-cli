@@ -53,7 +53,7 @@ Mandatory:
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("metricgroup", id, metricGroupObj)
 			} else if name != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("metricgroup", name, metricGroupObj)
+				err = cmd.Capi.GetObjectRefByName("metricgroup", name, metricGroupObj)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -160,7 +160,7 @@ Optional:
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("metric", id, metricObj)
 			} else if name != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("metric", name, metricObj)
+				err = cmd.Capi.GetObjectRefByName("metric", name, metricObj)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -280,7 +280,7 @@ Optional:
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("metricgroup", id, metricGroupObj)
 			} else if name != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("metricgroup", name, metricGroupObj)
+				err = cmd.Capi.GetObjectRefByName("metricgroup", name, metricGroupObj)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -367,7 +367,7 @@ Optional:
 			// Get the metric.
 			if id == -1 && metric != DEFAULT_STRING_FLAG_VALUE {
 				var metricObj = &api.Metric{}
-				err = cmd.Capi.GetObejctRefByName("metric", metric, metricObj)
+				err = cmd.Capi.GetObjectRefByName("metric", metric, metricObj)
 				if err != nil {
 					cmd.PrintResult("", err)
 				}
@@ -412,7 +412,7 @@ or
 			if metricID != -1 {
 				err = cmd.Capi.GetObjectRef("metric", metricID, metricObj)
 			} else if metric != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("metric", metric, metricObj)
+				err = cmd.Capi.GetObjectRefByName("metric", metric, metricObj)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)

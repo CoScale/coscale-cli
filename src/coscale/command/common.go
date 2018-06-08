@@ -100,7 +100,7 @@ Only one of them is necessary to be specified
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef(objectName, id, object)
 			} else if name != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName(objectName, name, object)
+				err = cmd.Capi.GetObjectRefByName(objectName, name, object)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -149,7 +149,7 @@ Mandatory:
 			if idObject != -1 {
 				err = cmd.Capi.GetObjectRef(objectName, idObject, object)
 			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName(objectName, nameObject, object)
+				err = cmd.Capi.GetObjectRefByName(objectName, nameObject, object)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -162,7 +162,7 @@ Mandatory:
 			if idGroup != -1 {
 				err = cmd.Capi.GetObjectRef(objectGroupName, idGroup, group)
 			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName(objectGroupName, nameGroup, group)
+				err = cmd.Capi.GetObjectRefByName(objectGroupName, nameGroup, group)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -211,7 +211,7 @@ Mandatory:
 			if idObject != -1 {
 				err = cmd.Capi.GetObjectRef(objectName, idObject, object)
 			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName(objectName, nameObject, object)
+				err = cmd.Capi.GetObjectRefByName(objectName, nameObject, object)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -224,7 +224,7 @@ Mandatory:
 			if idGroup != -1 {
 				err = cmd.Capi.GetObjectRef(objectGroupName, idGroup, group)
 			} else if nameObject != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName(objectGroupName, nameGroup, group)
+				err = cmd.Capi.GetObjectRefByName(objectGroupName, nameGroup, group)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
