@@ -412,9 +412,13 @@ Optional:
 	--servergroupid
 		The servergroup id for which the alert will be triggered.
 	Note: if no server or servergroup is provided the trigger will be set for the entire application.
+	--dimensions
+		The dimension specifications for the metric monitored in the following format:
+			<dimension_id1>:[agregator]:<dimension_value_id1,dimension_value_id2...>;...
+		e.g: '1:AVG:1,2,3;2:MAX:*;3:2,4'
 `,
 		Run: func(cmd *Command, args []string) {
-			var name, config, metric, description, server, serverGroup, source, typeName string
+			var name, config, metric, description, server, serverGroup, source, typeName, dimSpecs string
 			var metricID, autoResolve, serverID, serverGroupID, typeID int64
 			var onApp bool
 
@@ -432,6 +436,7 @@ Optional:
 			cmd.Flag.StringVar(&source, "source", "cli", "Deprecated.")
 			cmd.Flag.StringVar(&typeName, "typename", "Default alerts", "Specify the name of the alert type for triggers.")
 			cmd.Flag.Int64Var(&typeID, "typeid", -1, "Specify the alert type id for triggers.")
+			cmd.Flag.StringVar(&dimSpecs, "dimensions", "[]", "The dimension specifications.")
 
 			cmd.ParseArgs(args)
 
@@ -493,7 +498,7 @@ Optional:
 				typeID = alertTypeObj.ID
 			}
 
-			cmd.PrintResult(cmd.Capi.CreateTrigger(name, description, config, typeID, autoResolve, metricID, serverID, serverGroupID, onApp))
+			cmd.PrintResult(cmd.Capi.CreateTrigger(name, description, config, dimSpecs, typeID, autoResolve, metricID, serverID, serverGroupID, onApp))
 		},
 	},
 	{
@@ -541,9 +546,13 @@ Optional:
 	--servergroupid
 		The servergroup id for which the alert will be triggered.
 	Note: if no server or servergroup is provided the tigger will be set for entire application.
+	--dimensions
+		The dimension specifications for the metric monitored in the following format:
+			<dimension_id1>:[agregator]:<dimension_value_id1,dimension_value_id2...>;...
+		e.g: '1:AVG:1,2,3;2:MAX:*;3:2,4'
 `,
 		Run: func(cmd *Command, args []string) {
-			var name, config, metric, description, server, serverGroup, source, typeName string
+			var name, config, metric, description, server, serverGroup, source, typeName, dimSpecs string
 			var id, autoResolve, metricID, serverID, serverGroupID, typeID int64
 			var onApp bool
 
@@ -562,6 +571,7 @@ Optional:
 			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Deprecated.")
 			cmd.Flag.StringVar(&typeName, "typename", DEFAULT_STRING_FLAG_VALUE, "Specify the name of the alert type for triggers.")
 			cmd.Flag.Int64Var(&typeID, "typeid", -1, "Specify the alert type id for triggers.")
+			cmd.Flag.StringVar(&dimSpecs, "dimensions", DEFAULT_STRING_FLAG_VALUE, "The dimension specifications.")
 
 			cmd.ParseArgs(args)
 
@@ -664,6 +674,18 @@ Optional:
 
 			if alertTriggerObj.OnApp != onApp {
 				alertTriggerObj.OnApp = onApp
+			}
+
+			if dimSpecs != DEFAULT_STRING_FLAG_VALUE {
+				// Validate the dimensions specifications.
+				parsedDimensionSpecs, err := api.ParseDimensionSpecs(dimSpecs)
+				if err != nil {
+					cmd.PrintResult("", err)
+				}
+
+				if alertTriggerObj.DimensionSpecs != parsedDimensionSpecs {
+					alertTriggerObj.DimensionSpecs = parsedDimensionSpecs
+				}
 			}
 
 			cmd.PrintResult(cmd.Capi.UpdateTrigger(typeID, alertTriggerObj))
