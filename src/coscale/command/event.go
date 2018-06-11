@@ -110,6 +110,50 @@ The name or id should be specified
 		},
 	},
 	{
+		Name:      "listdata",
+		UsageLine: "event listdata (--name | --id) [--since --before]",
+		Long: `
+List the data objects for a CoScale event.
+
+The flags for listdata event action are:
+The name or id should be specified
+	--id
+		unique identifier of the event
+	--name
+		the event name of the event.
+	--since
+		list event data newer then the since UNIX timestamp.
+	--before
+		list event data older then the before UNIX timestamp.
+`,
+		Run: func(cmd *Command, args []string) {
+			var name string
+			var id, since, before int64
+			cmd.Flag.Usage = func() { cmd.PrintUsage() }
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "The name of the event.")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier of the event")
+			cmd.Flag.Int64Var(&since, "since", -1, "list event data newer then the since UNIX timestamp.")
+			cmd.Flag.Int64Var(&before, "before", -1, "list event data older then the before UNIX timestamp.")
+			cmd.ParseArgs(args)
+
+			var eventObj = &api.Event{}
+			var err error
+			if id != -1 {
+				err = cmd.Capi.GetObjectRef("event", id, eventObj)
+			} else if name != DEFAULT_STRING_FLAG_VALUE {
+				err = cmd.Capi.GetObejctRefByName("event", name, eventObj)
+			} else {
+				cmd.PrintUsage()
+				os.Exit(EXIT_FLAG_ERROR)
+			}
+			if err != nil {
+				cmd.PrintResult("", err)
+			}
+
+			cmd.PrintResult(cmd.Capi.ListEventData(eventObj.ID, since, before))
+		},
+	},
+	{
 		Name:      "data",
 		UsageLine: "event data (--name --id --message --subject) [--attribute --timestamp --stopTime]",
 		Long: `
