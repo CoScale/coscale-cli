@@ -412,10 +412,12 @@ Optional:
 	--servergroupid
 		The servergroup id for which the alert will be triggered.
 	Note: if no server or servergroup is provided the trigger will be set for the entire application.
-	--dimensions
-		The dimension specifications for the metric monitored in the following format:
-			<dimension_id1>:[agregator]:<dimension_value_id1,dimension_value_id2...>;...
-		e.g: '1:AVG:1,2,3;2:MAX:*;3:2,4'
+	--dimensionsSpecs
+		The dimensions specifications for the metric monitored in the following format:
+			[[<dimension_id1>,"[agregator]<dimension_value_id1,dimension_value_id2...>",...]]
+		e.g.: --dimensionsSpecs='[[1,"AVG(*)"]]'
+		      --dimensionsSpecs='[[2,"*"]]'
+		      --dimensionsSpecs='[[3,"11,12,13"],[4,"21,22,23"]]'
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, config, metric, description, server, serverGroup, source, typeName, dimSpecs string
@@ -436,7 +438,7 @@ Optional:
 			cmd.Flag.StringVar(&source, "source", "cli", "Deprecated.")
 			cmd.Flag.StringVar(&typeName, "typename", "Default alerts", "Specify the name of the alert type for triggers.")
 			cmd.Flag.Int64Var(&typeID, "typeid", -1, "Specify the alert type id for triggers.")
-			cmd.Flag.StringVar(&dimSpecs, "dimensions", "[]", "The dimension specifications.")
+			cmd.Flag.StringVar(&dimSpecs, "dimensionsSpecs", "[]", "The dimensions specifications.")
 
 			cmd.ParseArgs(args)
 
@@ -546,10 +548,12 @@ Optional:
 	--servergroupid
 		The servergroup id for which the alert will be triggered.
 	Note: if no server or servergroup is provided the tigger will be set for entire application.
-	--dimensions
-		The dimension specifications for the metric monitored in the following format:
-			<dimension_id1>:[agregator]:<dimension_value_id1,dimension_value_id2...>;...
-		e.g: '1:AVG:1,2,3;2:MAX:*;3:2,4'
+	--dimensionsSpecs
+		The dimensions specifications for the metric monitored in the following format:
+			[[<dimension_id1>,"[agregator]<dimension_value_id1,dimension_value_id2...>",...]]
+		e.g.: --dimensionsSpecs='[[1,"AVG(*)"]]'
+		      --dimensionsSpecs='[[2,"*"]]'
+		      --dimensionsSpecs='[[3,"11,12,13"],[4,"21,22,23"]]'
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, config, metric, description, server, serverGroup, source, typeName, dimSpecs string
@@ -571,7 +575,7 @@ Optional:
 			cmd.Flag.StringVar(&source, "source", DEFAULT_STRING_FLAG_VALUE, "Deprecated.")
 			cmd.Flag.StringVar(&typeName, "typename", DEFAULT_STRING_FLAG_VALUE, "Specify the name of the alert type for triggers.")
 			cmd.Flag.Int64Var(&typeID, "typeid", -1, "Specify the alert type id for triggers.")
-			cmd.Flag.StringVar(&dimSpecs, "dimensions", DEFAULT_STRING_FLAG_VALUE, "The dimension specifications.")
+			cmd.Flag.StringVar(&dimSpecs, "dimensionsSpecs", DEFAULT_STRING_FLAG_VALUE, "The dimensions specifications.")
 
 			cmd.ParseArgs(args)
 
