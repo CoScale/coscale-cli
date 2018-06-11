@@ -141,7 +141,7 @@ The name or id should be specified
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("event", id, eventObj)
 			} else if name != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("event", name, eventObj)
+				err = cmd.Capi.GetObjectRefByName("event", name, eventObj)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
