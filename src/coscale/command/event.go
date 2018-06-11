@@ -24,7 +24,7 @@ Create new event category.
 The flags for new event action are:
 
 Mandatory:
-	--name 
+	--name
 		specify name of the event.
 Optional:
 	--description
@@ -59,7 +59,7 @@ The flags for update event action are:
 The name or id should be specified
 	--id
 		Unique identifier, if we want to update the name of the event, this become mandatory
-	--name 
+	--name
 		specify the event name of the event.
 	--description
 		specify the description of the event.
@@ -107,6 +107,50 @@ The name or id should be specified
 			}
 
 			cmd.PrintResult(cmd.Capi.UpdateEvent(eventObj))
+		},
+	},
+	{
+		Name:      "listdata",
+		UsageLine: "event listdata (--name | --id) [--since --before]",
+		Long: `
+List the data objects for a CoScale event.
+
+The flags for listdata event action are:
+The name or id should be specified
+	--id
+		unique identifier of the event
+	--name
+		the event name of the event.
+	--since
+		list event data newer then the since UNIX timestamp.
+	--before
+		list event data older then the before UNIX timestamp.
+`,
+		Run: func(cmd *Command, args []string) {
+			var name string
+			var id, since, before int64
+			cmd.Flag.Usage = func() { cmd.PrintUsage() }
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "The name of the event.")
+			cmd.Flag.Int64Var(&id, "id", -1, "Unique identifier of the event")
+			cmd.Flag.Int64Var(&since, "since", -1, "list event data newer then the since UNIX timestamp.")
+			cmd.Flag.Int64Var(&before, "before", -1, "list event data older then the before UNIX timestamp.")
+			cmd.ParseArgs(args)
+
+			var eventObj = &api.Event{}
+			var err error
+			if id != -1 {
+				err = cmd.Capi.GetObjectRef("event", id, eventObj)
+			} else if name != DEFAULT_STRING_FLAG_VALUE {
+				err = cmd.Capi.GetObejctRefByName("event", name, eventObj)
+			} else {
+				cmd.PrintUsage()
+				os.Exit(EXIT_FLAG_ERROR)
+			}
+			if err != nil {
+				cmd.PrintResult("", err)
+			}
+
+			cmd.PrintResult(cmd.Capi.ListEventData(eventObj.ID, since, before))
 		},
 	},
 	{
@@ -161,18 +205,18 @@ Insert event data.
 
 The flags for newdata event action are:
 Mandatory:
-	--name 
+	--name
 		specify the event name.
 	--id
 		specify the event id.
 	Only one from id/name is necessary.
-		
+
 	--message
-		The message for the event data.	
+		The message for the event data.
 	--subject
 		The subject for the event data. The subject is structured as follows:
 		s<serverId> for a server, g<servergroupId> for a server group, a for the application.
-Optional:	
+Optional:
 	--attribute
 		JSON String detailing the progress of the event.
 	--timestamp
@@ -224,17 +268,17 @@ Update event data.
 
 The flags for updatedata event action are:
 Mandatory:
-	--name 
+	--name
 		specify the event name.
 	--id
 		specify the event id.
 	Only one from id/name is necessary.
-	
+
 	--dataid
 		specify the unique id of the event data.
 Optional:
 	--message
-		The message for the event data.	
+		The message for the event data.
 	--subject
 		The subject for the event data. The subject is structured as follows:
 		s<serverId> for a server, g<servergroupId> for a server group, a for the application.
@@ -310,7 +354,7 @@ Delete a eventdata entry.
 
 The flags for event deletedata action are:
 Mandatory:
-	--id 
+	--id
 		specify the event id.
 	--dataid
 		specify the unique id of the event data.
