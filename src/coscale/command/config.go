@@ -36,7 +36,7 @@ Check the CLI configuration.
 				os.Exit(EXIT_SUCCESS_ERROR)
 			}
 			// check if we can loggin with this configuration
-			api := api.NewApi(config.BaseUrl, config.AccessToken, config.AppId, false)
+			api := api.NewApi(config.BaseUrl, config.AccessToken, config.AppId, false, false)
 			err = api.Login()
 			if err != nil {
 				fmt.Fprintln(os.Stderr, "Api authentication failed")

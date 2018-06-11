@@ -82,7 +82,7 @@ The name or id should be specified
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("server", id, serverObj)
 			} else if name != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("server", name, serverObj)
+				err = cmd.Capi.GetObjectRefByName("server", name, serverObj)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)
@@ -116,7 +116,44 @@ var ServerGroupObject = NewCommand("servergroup", "servergroup <action> [--<fiel
 // ServerGroupActions defines the server group actions on the CLI.
 var ServerGroupActions = []*Command{
 	ListCmd("servergroup"),
-	GetCmd("servergroup"),
+	{
+		Name:      "get",
+		UsageLine: `servergroup get (--name|--id|--path)`,
+		Long: `
+Get a CoScale servergroup object by id, name or path(hierarchy).
+
+The flags for servergroup get action are:
+Only one of them is necessary to be specified
+
+	--name
+		Specify the servergroup name.
+	--id
+		Specify the servergroup id.
+	--path
+		The hierarchy of the server groups leading to the target server group.
+		e.g. 'Kubernetes/Namespaces/Target Namespace'
+`,
+		Run: func(cmd *Command, args []string) {
+			var name, path string
+			var id int64
+			cmd.Flag.Usage = func() { cmd.PrintUsage() }
+			cmd.Flag.StringVar(&name, "name", DEFAULT_STRING_FLAG_VALUE, "Name for the server group.")
+			cmd.Flag.Int64Var(&id, "id", -1, "Specify the servergroup id.")
+			cmd.Flag.StringVar(&path, "path", DEFAULT_STRING_FLAG_VALUE, "The hierarchy of the server groups leading to the target server group.")
+			cmd.ParseArgs(args)
+
+			if id != -1 {
+				cmd.PrintResult(cmd.Capi.GetObject("servergroup", id))
+			} else if name != DEFAULT_STRING_FLAG_VALUE {
+				cmd.PrintResult(cmd.Capi.GetObjectByName("servergroup", name))
+			} else if path != DEFAULT_STRING_FLAG_VALUE {
+				cmd.PrintResult(cmd.Capi.GetServerGroupByPath(path))
+			} else {
+				cmd.PrintUsage()
+				os.Exit(EXIT_FLAG_ERROR)
+			}
+		},
+	},
 	DeleteCmd(&api.ServerGroup{}, "servergroup"),
 	{
 		Name:      "new",
@@ -197,7 +234,7 @@ The name or id should be specified
 			if id != -1 {
 				err = cmd.Capi.GetObjectRef("servergroup", id, serverGroupObj)
 			} else if name != DEFAULT_STRING_FLAG_VALUE {
-				err = cmd.Capi.GetObejctRefByName("servergroup", name, serverGroupObj)
+				err = cmd.Capi.GetObjectRefByName("servergroup", name, serverGroupObj)
 			} else {
 				cmd.PrintUsage()
 				os.Exit(EXIT_FLAG_ERROR)

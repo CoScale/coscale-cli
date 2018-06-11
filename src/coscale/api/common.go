@@ -63,8 +63,8 @@ func (api *Api) GetObjectByName(objectName string, name string) (string, error) 
 	return result, nil
 }
 
-// GetObejctRefByName will put in result a reference to the oject specified by objectName and name
-func (api *Api) GetObejctRefByName(objectName string, name string, result Object) error {
+// GetObjectRefByName will put in result a reference to the oject specified by objectName and name
+func (api *Api) GetObjectRefByName(objectName string, name string, result Object) error {
 	// URL Encoded.
 	name = url.QueryEscape(name)
 
@@ -79,8 +79,8 @@ func (api *Api) GetObejctRefByName(objectName string, name string, result Object
 	return nil
 }
 
-// GetObejctRefByNameFromGroup will return the object specified by objectName from objectGroup that have a certain name
-func (api *Api) GetObejctRefByNameFromGroup(objectGroup, objectName string, groupID int64, name string, result Object) error {
+// GetObjectRefByNameFromGroup will return the object specified by objectName from objectGroup that have a certain name
+func (api *Api) GetObjectRefByNameFromGroup(objectGroup, objectName string, groupID int64, name string, result Object) error {
 	// URL Encoded.
 	name = url.QueryEscape(name)
 

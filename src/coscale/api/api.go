@@ -129,21 +129,25 @@ type Api struct {
 	// AccessToken is a UUID giving access permissions on the application.
 	AccessToken string
 	// AppID is a UUID defining the application.
-	AppID       string
-	rawOutput   bool
-	token       string
+	AppID     string
+	rawOutput bool
+	token     string
+	// Set aditional query parameters.
+	query       string
 	validConfig bool
+	// Print aditional util information.
+	verbose bool
 }
 
 // NewApi creates a new Api connector using an email and a password.
-func NewApi(baseUrl string, accessToken string, appID string, rawOutput bool) *Api {
-	api := &Api{baseUrl, accessToken, appID, rawOutput, "", true}
+func NewApi(baseUrl string, accessToken string, appID string, rawOutput, verbose bool) *Api {
+	api := &Api{baseUrl, accessToken, appID, rawOutput, "", "", true, verbose}
 	return api
 }
 
 // NewFakeApi creates a new Api connector using an email and a password.
 func NewFakeApi() *Api {
-	api := &Api{"", "", "", true, "", false}
+	api := &Api{"", "", "", true, "", "", false, false}
 	return api
 }
 
@@ -185,8 +189,20 @@ type RequestErrorResponse struct {
 
 // Do an http request.
 func (api *Api) doHttpRequest(method string, uri string, token string, data map[string][]string, timeout time.Duration) ([]byte, error) {
+	if method == "GET" && len(api.query) > 0 {
+		if strings.ContainsAny(uri, "?") {
+			uri = fmt.Sprintf("%s&%s", uri, api.query)
+		} else {
+			uri = fmt.Sprintf("%s?%s", uri, api.query)
+		}
+	}
 	requestBody := url.Values(data).Encode()
 	req, err := http.NewRequest(method, uri, strings.NewReader(requestBody))
+
+	// Print the requested url.
+	if api.verbose {
+		fmt.Println(method, uri)
+	}
 
 	if err != nil {
 		return nil, err
@@ -234,6 +250,12 @@ func (api *Api) doHttpRequest(method string, uri string, token string, data map[
 	}
 
 	return body, nil
+}
+
+// SetQueryString set aditional query parameters only for the next call.
+func (api *Api) SetQueryString(query string) {
+	// URL Encoded.
+	api.query = query
 }
 
 // LoginData contains the required fields for the login API function.
@@ -300,22 +322,27 @@ func (api *Api) makeCall(method string, uri string, data map[string][]string, js
 	if err != nil {
 		return err
 	}
+	return api.HandleResponse(b, jsonOut, target)
+}
+
+// HandleResponse is used the Handle the response from the API.
+func (api *Api) HandleResponse(response []byte, jsonOut bool, target interface{}) error {
 	if target != nil {
 		if jsonOut {
 			//if the output will be json, check if we need to format it or no
 			var result string
 			if api.rawOutput {
-				result = string(b)
+				result = string(response)
 			} else {
 				var out bytes.Buffer
-				json.Indent(&out, b, "", " ")
+				json.Indent(&out, response, "", " ")
 				result = out.String()
 			}
 			if t, ok := target.(*string); ok {
 				*t = result
 			}
 		} else {
-			return json.Unmarshal(b, target)
+			return json.Unmarshal(response, target)
 		}
 	}
 	return nil

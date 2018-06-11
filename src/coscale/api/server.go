@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // Server describes the server object on the API.
@@ -81,6 +82,48 @@ func (api *Api) UpdateServer(server *Server) (string, error) {
 		return "", err
 	}
 	return api.GetObject("server", server.ID)
+}
+
+// GetServerGroupByPath returns a server group by the hierarchy.
+func (api *Api) GetServerGroupByPath(path string) (string, error) {
+
+	var serverGroup *ServerGroup
+
+	groupNames := strings.Split(path, "/")
+	for i, groupName := range groupNames {
+
+		var query string
+
+		if i == 0 {
+			query = "selectByRoot=true"
+		} else if serverGroup != nil && serverGroup.ID > 0 {
+			query = fmt.Sprintf("selectByParent_id=%d", serverGroup.ID)
+		} else {
+			return "[]", nil
+		}
+
+		api.SetQueryString(query)
+		result, err := api.GetObjectByName("servergroup", groupName)
+		if err != nil {
+			return "", err
+		}
+		// For the last group just return it.
+		if i == len(groupNames)-1 {
+			return result, nil
+		}
+
+		tmp := make([]*ServerGroup, 1)
+		err = api.HandleResponse([]byte(result), false, &tmp)
+		if err != nil {
+			return "", err
+		}
+		if len(tmp) != 1 {
+			return "[]", nil
+		}
+		serverGroup = tmp[0]
+	}
+
+	return "[]", nil
 }
 
 // CreateServerGroup creates a new ServerGroup using the API.
