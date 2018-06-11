@@ -1,7 +1,7 @@
 FROM alpine:3.4
-MAINTAINER Frederick Ryckbosch <fred@coscale.com>
 
-COPY ./files/coscale-cli /tmp/coscale-cli
+ARG VERSION
+ADD https://github.com/CoScale/coscale-cli/releases/download/${VERSION}/coscale-cli /tmp/coscale-cli
 
 RUN apk add --no-cache ca-certificates && \
     apk update && \
