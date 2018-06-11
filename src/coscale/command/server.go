@@ -131,7 +131,7 @@ Only one of them is necessary to be specified
 		Specify the servergroup id.
 	--path
 		The hierarchy of the server groups leading to the target server group.
-		e.g. 'Kubernetes/Namespaces/TargetServerGroup'
+		e.g. 'Kubernetes/Namespaces/Target Namespace'
 `,
 		Run: func(cmd *Command, args []string) {
 			var name, path string

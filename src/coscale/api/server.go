@@ -99,7 +99,7 @@ func (api *Api) GetServerGroupByPath(path string) (string, error) {
 		} else if serverGroup != nil && serverGroup.ID > 0 {
 			query = fmt.Sprintf("selectByParent_id=%d", serverGroup.ID)
 		} else {
-			return "", fmt.Errorf("Failed to get the parent for ServerGroup: %s", groupName)
+			return "[]", nil
 		}
 
 		api.SetQueryString(query)
@@ -118,16 +118,12 @@ func (api *Api) GetServerGroupByPath(path string) (string, error) {
 			return "", err
 		}
 		if len(tmp) != 1 {
-			return "", fmt.Errorf("Failed to get the parent for ServerGroup: %s", groupName)
+			return "[]", nil
 		}
 		serverGroup = tmp[0]
 	}
 
-	if serverGroup != nil {
-		return "", fmt.Errorf("Failed to get the child of group: %s", serverGroup.Name)
-	}
-
-	return "", fmt.Errorf("Failed to get the group: %s", path)
+	return "[]", nil
 }
 
 // CreateServerGroup creates a new ServerGroup using the API.

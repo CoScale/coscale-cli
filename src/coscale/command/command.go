@@ -157,7 +157,7 @@ func (c *Command) ParseArgs(args []string) {
 	c.Flag.StringVar(&appId, "app-id", "", "The application id.")
 	c.Flag.StringVar(&accessToken, "access-token", "", "A valid access token for the given application.")
 	c.Flag.BoolVar(&rawOutput, "rawOutput", false, "The returned json objects are returned formatted by default.")
-	c.Flag.BoolVar(&verbose, "verbose", false, "Print aditional util information.")
+	c.Flag.BoolVar(&verbose, "verbose", false, "Print the URLs of the API calls.")
 
 	c.Flag.Parse(args)
 	unknownArgs := c.Flag.Args()
@@ -211,7 +211,7 @@ the credentials can also be provided on the command line using:
 
 
 	--verbose
-		Print aditional util information.
+		Print the URLs of the API calls.
 `
 
 var usageTemplate = `coscale-cli a tool for CoScale Api.
