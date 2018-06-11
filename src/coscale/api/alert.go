@@ -1,8 +1,10 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -46,17 +48,18 @@ func (a AlertType) GetId() int64 {
 
 // AlertTrigger defines what Triggers an Alert of AlertType
 type AlertTrigger struct {
-	ID          int64
-	Name        string // Unique
-	Description string
-	AutoResolve int64 `json:"autoresolveSeconds"` // Optional
-	Metric      int64
-	Config      string
-	OnApp       bool
-	GroupID     int64 // Optional
-	ServerID    int64 // Optional
-	Source      string
-	Version     int64
+	ID             int64
+	Name           string // Unique
+	Description    string
+	AutoResolve    int64  `json:"autoresolveSeconds"` // Optional
+	DimensionSpecs string // The dimension specs for the selected metric.
+	Metric         int64
+	Config         string
+	OnApp          bool
+	GroupID        int64 // Optional
+	ServerID       int64 // Optional
+	Source         string
+	Version        int64
 }
 
 // GetId returns the id of the AlertTrigger.
@@ -161,7 +164,7 @@ func (api *Api) GetTriggers(alertTypeID int64) (string, error) {
 }
 
 // CreateTrigger is used to add a new Trigger for alerts.
-func (api *Api) CreateTrigger(name, description, config string, alertTypeID, autoResolve, metricID, serverID, serverGroupID int64, onApp bool) (string, error) {
+func (api *Api) CreateTrigger(name, description, config, dimensionSpecs string, alertTypeID, autoResolve, metricID, serverID, serverGroupID int64, onApp bool) (string, error) {
 
 	data := map[string][]string{
 		"name":        {name},
@@ -171,6 +174,13 @@ func (api *Api) CreateTrigger(name, description, config string, alertTypeID, aut
 		"onApp":       {fmt.Sprintf("%t", onApp)},
 		"source":      {GetSource()},
 	}
+
+	parsedDimensionSpecs, err := ParseDimensionSpecs(dimensionSpecs)
+	if err != nil {
+		return "", err
+	}
+
+	data["dimensionSpecs"] = []string{parsedDimensionSpecs}
 
 	// Set the option values if they have value.
 	if serverID != -1 {
@@ -196,12 +206,13 @@ func (api *Api) CreateTrigger(name, description, config string, alertTypeID, aut
 func (api *Api) UpdateTrigger(typeID int64, trigger *AlertTrigger) (string, error) {
 
 	data := map[string][]string{
-		"name":        {trigger.Name},
-		"description": {trigger.Description},
-		"config":      {trigger.Config},
-		"onApp":       {fmt.Sprintf("%t", trigger.OnApp)},
-		"source":      {trigger.Source},
-		"version":     {fmt.Sprintf("%d", trigger.Version)},
+		"name":           {trigger.Name},
+		"description":    {trigger.Description},
+		"dimensionSpecs": {trigger.DimensionSpecs},
+		"config":         {trigger.Config},
+		"onApp":          {fmt.Sprintf("%t", trigger.OnApp)},
+		"source":         {trigger.Source},
+		"version":        {fmt.Sprintf("%d", trigger.Version)},
 	}
 
 	// Set the option values if they have value.
@@ -266,4 +277,76 @@ func ParseHandle(handle string) (string, error) {
 
 	jsonHandle, err := json.Marshal(result)
 	return string(jsonHandle), err
+}
+
+// ParseDimensionSpecs is used to parse the dimensions specs for a metric.
+func ParseDimensionSpecs(format string) (string, error) {
+	var js interface{}
+	// Check if the specs are already provided in JSON format.
+	if err := json.Unmarshal([]byte(format), &js); err == nil {
+		return format, nil
+	}
+	var buffer bytes.Buffer
+
+	formatParts := strings.Split(format, ";")
+
+	buffer.WriteString("[")
+	for i, formatPart := range formatParts {
+		if i > 0 {
+			buffer.WriteString(",")
+		}
+		buffer.WriteString("[")
+
+		elements := strings.Split(formatPart, ":")
+
+		var dimPart, dimValsPart, aggregatorPart string
+		if len(elements) == 2 {
+			dimPart = elements[0]
+			dimValsPart = elements[1]
+		} else if len(elements) == 3 {
+			dimPart = elements[0]
+			aggregatorPart = strings.ToUpper(elements[1])
+			dimValsPart = elements[2]
+		} else {
+			return "", fmt.Errorf("Failed to parse dimension specs format: %s", formatPart)
+		}
+
+		if len(dimPart) == 0 || len(dimValsPart) == 0 {
+			return "", fmt.Errorf("Failed to parse dimension specs format: %s", formatPart)
+		}
+
+		dimID, err := strconv.ParseInt(dimPart, 10, 64)
+		if err != nil {
+			return "", fmt.Errorf("Failed to parse dimension specs format: %s", formatPart)
+		}
+		buffer.WriteString(fmt.Sprintf(`%d,"`, dimID))
+
+		// Just check if is valid format.
+		if dimValsPart != "*" {
+			for _, dimVal := range strings.Split(dimValsPart, ",") {
+				_, err := strconv.ParseInt(dimVal, 10, 64)
+				if err != nil {
+					return "", fmt.Errorf("Failed to parse dimension values ids: %s", formatPart)
+				}
+			}
+		}
+
+		if len(aggregatorPart) > 0 {
+			buffer.WriteString(aggregatorPart)
+			buffer.WriteString("(")
+			buffer.WriteString(dimValsPart)
+			buffer.WriteString(")")
+		} else {
+			buffer.WriteString(dimValsPart)
+		}
+		buffer.WriteString(`"]`)
+	}
+	buffer.WriteString("]")
+
+	// Check the format is valid.
+	if err := json.Unmarshal([]byte(buffer.Bytes()), &js); err != nil {
+		return "", err
+	}
+
+	return buffer.String(), nil
 }
